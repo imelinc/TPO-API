@@ -1,11 +1,16 @@
 package com.example.uade.tpo.ecommerce_grupo10.entity;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -38,4 +43,13 @@ public class Producto {
 
     @ManyToOne
     private Usuario vendedor; // Relacion muchos a uno con la entidad Usuario, cada producto tiene un vendedor asociado
+
+    @ManyToOne
+    private Categoria categoria; // Relacion muchos a uno con la entidad Categoria, cada producto pertenece a una categoria
+
+    @OneToMany(mappedBy="producto") // relacion uno a muchos con la entidad ImagenProducto
+    private Set<ImagenProducto> imagenes = new HashSet<>(); // Set de imagenes
+
+    @OneToOne(mappedBy="producto") // relacion uno a uno con la entidad DescuentoProducto
+    private DescuentoProducto descuento; // Cada producto puede tener un descuento asociado (los descuentos no son acumulables)
 }

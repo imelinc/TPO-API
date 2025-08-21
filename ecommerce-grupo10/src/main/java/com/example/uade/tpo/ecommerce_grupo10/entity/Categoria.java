@@ -1,10 +1,14 @@
 package com.example.uade.tpo.ecommerce_grupo10.entity;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,4 +29,7 @@ public class Categoria {
 
     @Column(nullable = false, length = 100)
     private String nombre;
+
+    @OneToMany(mappedBy= "categoria") // relacion uno a muchos con la entidad Producto
+    private Set<Producto> productos = new HashSet<>(); // Set de productos asociados a la categoria
 }

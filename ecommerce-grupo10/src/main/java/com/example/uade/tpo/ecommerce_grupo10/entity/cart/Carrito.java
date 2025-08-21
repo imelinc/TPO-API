@@ -27,4 +27,6 @@ public class Carrito {
 
     @OneToOne // relacion uno a uno con la entidad Usuario
     private Usuario usuario; // Usuario al que pertenece el carrito
+
+    
 }
