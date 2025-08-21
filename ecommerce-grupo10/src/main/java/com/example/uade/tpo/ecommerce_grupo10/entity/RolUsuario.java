@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,5 +26,8 @@ public class RolUsuario {
 
     @Column(nullable = false, length = 30)
     private String nombre; // ADMIN | COMPRADOR | VENDEDOR
+
+    @ManyToMany
+    private Usuario usuario; // Relacion con la entidad Usuario, puede ser un comprador, vendedor o administrador
 
 }

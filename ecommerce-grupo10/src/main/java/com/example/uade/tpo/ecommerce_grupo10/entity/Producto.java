@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -35,4 +36,6 @@ public class Producto {
     @Column(nullable=false)
     private int stock;
 
+    @ManyToOne
+    private Usuario vendedor; // Relacion muchos a uno con la entidad Usuario, cada producto tiene un vendedor asociado
 }
