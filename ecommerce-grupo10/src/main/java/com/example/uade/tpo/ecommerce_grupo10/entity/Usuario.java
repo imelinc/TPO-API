@@ -5,6 +5,7 @@ import java.util.Set;
 
 import com.example.uade.tpo.ecommerce_grupo10.entity.cart.Carrito;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -66,8 +67,11 @@ public class Usuario {
     @OneToMany(mappedBy = "vendedor")
     private Set<Producto> productos = new HashSet<>(); // Set de productos asociados
 
-    @OneToMany
-    private Set<Orden> compras = new HashSet<>(); // Set de ordenes asociadas
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true) // relacion uno a muchos con la entidad Orden
+    // cascade = CascadeType.ALL permite que cualquier operacion de usuario, se aplique a sus ordens asociadas (borrar, actualizar, etc.)
+    // orphanRemoval = true permite que al eliminar una orden de un usuario,
+    // se elimine la orden de la base de datos si ya no tiene un usuario asociado
+    private Set<Orden> compras = new HashSet<>();
 
 
 }
