@@ -1,10 +1,13 @@
 package com.example.uade.tpo.ecommerce_grupo10.entity.cart;
 
+import com.example.uade.tpo.ecommerce_grupo10.entity.Producto;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,6 +30,11 @@ public class ItemCarrito {
     private int cantidad;
 
     @Column(nullable=false)
-    private double precioUnitario;
-    
+    private double precioUnitario; 
+
+    @ManyToOne
+    private Carrito carrito; // Relacion con la entidad Carrito
+
+    @ManyToOne
+    private Producto producto; // Relacion con la entidad Producto, cada item del carrito tiene un producto asociado
 }

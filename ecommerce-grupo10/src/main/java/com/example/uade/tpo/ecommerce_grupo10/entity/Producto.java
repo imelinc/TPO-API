@@ -3,6 +3,8 @@ package com.example.uade.tpo.ecommerce_grupo10.entity;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.example.uade.tpo.ecommerce_grupo10.entity.cart.ItemCarrito;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -52,4 +54,7 @@ public class Producto {
 
     @OneToOne(mappedBy="producto") // relacion uno a uno con la entidad DescuentoProducto
     private DescuentoProducto descuento; // Cada producto puede tener un descuento asociado (los descuentos no son acumulables)
+
+    @OneToMany(mappedBy = "producto") // relacion uno a muchos con la entidad ItemCarrito
+    private Set<ItemCarrito> itemsCarrito = new HashSet<>(); // Set de items del carrito asociados a este producto
 }
