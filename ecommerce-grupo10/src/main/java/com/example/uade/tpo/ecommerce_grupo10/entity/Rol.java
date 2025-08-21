@@ -5,7 +5,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,7 +17,7 @@ import lombok.Setter;
 @Setter // genera los setters
 @NoArgsConstructor // genera el constructor por defecto
 @AllArgsConstructor // genera el constructor con todos los parametros
-public class RolUsuario {
+public class Rol {
     
     @Id 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,8 +25,5 @@ public class RolUsuario {
 
     @Column(nullable = false, length = 30)
     private String nombre; // ADMIN | COMPRADOR | VENDEDOR
-
-    @ManyToMany
-    private Usuario usuario; // Relacion con la entidad Usuario, puede ser un comprador, vendedor o administrador
 
 }
