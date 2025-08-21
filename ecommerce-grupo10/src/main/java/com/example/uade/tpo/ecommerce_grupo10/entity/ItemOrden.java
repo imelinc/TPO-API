@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -37,4 +38,7 @@ public class ItemOrden {
 
     @Column(nullable = false)
     private double descuentoAplicado;
+
+    @ManyToOne
+    private Orden orden; // Relacion con la entidad Orden
 }

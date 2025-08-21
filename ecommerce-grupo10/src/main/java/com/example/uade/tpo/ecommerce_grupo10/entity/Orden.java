@@ -1,10 +1,15 @@
 package com.example.uade.tpo.ecommerce_grupo10.entity;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -31,4 +36,10 @@ public class Orden {
     
     @Column(nullable = false)
     private double total;
+
+    @ManyToOne // relacion muchos a uno con la entidad Usuario
+    private Usuario usuario;
+
+    @OneToMany(mappedBy = "orden") // relacion uno a muchos con la entidad ItemOrden
+    private Set<ItemOrden> items = new HashSet<>(); // Set de items asociados a la orden
 }

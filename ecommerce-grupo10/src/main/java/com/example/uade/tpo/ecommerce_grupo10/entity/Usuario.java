@@ -58,4 +58,9 @@ public class Usuario {
     // si el usuario es vendedor, puede tener productos asociados
     @OneToMany(mappedBy = "vendedor")
     private Set<Producto> productos = new HashSet<>(); // Set de productos asociados
+
+    @OneToMany(mappedBy = "usuario")
+    private Set<Orden> compras = new HashSet<>(); // Set de ordenes asociadas
+
+    
 }
