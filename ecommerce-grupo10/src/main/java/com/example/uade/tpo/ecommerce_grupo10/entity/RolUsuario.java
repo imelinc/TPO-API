@@ -6,9 +6,17 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name="Roles Usuarios")
+@Getter // genera los getters
+@Setter // genera los setters
+@NoArgsConstructor // genera el constructor por defecto
+@AllArgsConstructor // genera el constructor con todos los parametros
 public class RolUsuario {
     
     @Id 
@@ -17,33 +25,5 @@ public class RolUsuario {
 
     @Column(nullable = false, length = 30)
     private String nombre; // ADMIN | COMPRADOR | VENDEDOR
-
-    // Constructor por defecto
-    public RolUsuario() {}
-
-    // Constructor con parametros
-    public RolUsuario(Long id, String nombre) {
-        this.id = id;
-        this.nombre = nombre;
-    }
-
-    // --- Getters y Setters ---
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
 
 }
