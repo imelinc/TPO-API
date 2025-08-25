@@ -49,25 +49,29 @@ public class CategoriaServiceImpl implements CategoriaService {
 
     @Override
     public Categoria actualizar(Long id, Categoria categoria) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'actualizar'");
+        Categoria existente = obtenerPorId(id);
+
+        // validamos
+        if (categoria.getNombre() != null && !categoria.getNombre().isBlank() && !categoria.getNombre().equals(existente.getNombre())) {
+            if (categoriaRepository.existeByNombre(categoria.getNombre()))
+                throw new IllegalArgumentException("Ya existe una categoria con el nombre " + categoria.getNombre());
+            existente.setNombre(categoria.getNombre());
+        }
+        return categoriaRepository.save(existente);
     }
 
     @Override
     public void eliminar(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'eliminar'");
+        Categoria existente = obtenerPorId(id);
+        categoriaRepository.delete(existente);
     }
+
+    // METODO UTIL
 
     @Override
     public boolean existePorNombre(String nombre) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'existePorNombre'");
+        return categoriaRepository.existeByNombre(nombre);
     }
-
-    // metodos de lectura
-
-
 
 
 }
