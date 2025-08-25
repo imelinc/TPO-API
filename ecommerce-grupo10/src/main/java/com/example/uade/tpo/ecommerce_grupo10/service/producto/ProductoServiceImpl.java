@@ -19,7 +19,10 @@ public class ProductoServiceImpl implements ProductoService{
     @Autowired // inyeccion de la dependencia del repositorio
     ProductoRepository productoRepository;
 
+    @Autowired
     private CategoriaRepository categoriaRepository;
+
+    @Autowired
     private MapperProducto mapperProducto;
 
     private Categoria getCategoria(Long categoriaId){
