@@ -69,7 +69,7 @@ public class CategoriaServiceImpl implements CategoriaService {
     // METODO UTIL
 
     @Override
-    public boolean existePorNombre(String nombre) {
+    public boolean existsPorNombre(String nombre) {
         return categoriaRepository.existsByNombre(nombre);
     }
 
