@@ -1,6 +1,6 @@
 package com.example.uade.tpo.ecommerce_grupo10.controllers;
 
-import java.util.Optional;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -30,75 +30,69 @@ public class ProductoController {
     @Autowired
     private ProductoService productoService;
 
-    // Catalogo disponible, stock > 0
+    // Catálogo disponible (stock > 0)
     @GetMapping
-    public Page<Producto> listarProductos(
+    public List<ProductoDTO> listarProductos(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        return productoService.listarDisponibles(PageRequest.of(page, size));
+
+        Page<Producto> result = productoService.listarDisponibles(PageRequest.of(page, size));
+        return result.getContent().stream()
+                .map(MapperProducto::toDTO)
+                .toList();
     }
 
-    // Buscar por titulo
+    // Buscar por titulo (stock > 0)
     @GetMapping("/buscar")
-    public Page<Producto> buscarPorTitulo(@RequestParam String titulo,
+    public List<ProductoDTO> buscarPorTitulo(
+            @RequestParam String titulo,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        return productoService.buscarPorTitulo(titulo, PageRequest.of(page, size));
+
+        Page<Producto> result = productoService.buscarPorTitulo(titulo, PageRequest.of(page, size));
+        return result.getContent().stream()
+                .map(MapperProducto::toDTO)
+                .toList();
     }
 
-    // metodo para obtener un producto por ID
-    @GetMapping("/{id}") 
-    public ResponseEntity<Producto> getProductoById(@PathVariable Long id) {
-        Optional<Producto> result = productoService.get(id);
-        if (result.isPresent())
-            return ResponseEntity.ok(result.get());
-        return ResponseEntity.noContent().build();
+    // Obtener detalle por id
+    @GetMapping("/{id}")
+    public ResponseEntity<ProductoDTO> getProductoById(@PathVariable Long id) {
+        Producto p = productoService.get(id); // lanza 404 si no existe
+        return ResponseEntity.ok(MapperProducto.toDTO(p));
     }
 
     // Filtrar por categoria
     @GetMapping("/categoria/{id}")
-    public Page<Producto> porCategoria(@PathVariable Long id,
+    public List<ProductoDTO> porCategoria(
+            @PathVariable Long id,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "12") int size) {
-        return productoService.buscarPorCategoria(id, PageRequest.of(page, size));
+
+        Page<Producto> result = productoService.buscarPorCategoria(id, PageRequest.of(page, size));
+        return result.getContent().stream()
+                .map(MapperProducto::toDTO)
+                .toList();
     }
 
-    // Crear un producto
+    // Crear
     @PostMapping
     public ResponseEntity<ProductoDTO> crearProducto(@RequestBody ProductoDTO dto) {
-        Producto p = new Producto();
-        p.setTitulo(dto.getTitulo());
-        p.setDescripcion(dto.getDescripcion());
-        p.setPrecio(dto.getPrecio());
-        p.setCategoria(null); //! cuando tengamos categoria vemos 
-        if (dto.getStock() == null)
-            throw new IllegalArgumentException("Stock requerido");
-        MapperProducto.updateEntityFromDTO(p, dto);
-        Producto creado = productoService.save(p);
+        var creado = productoService.save(dto);
         return ResponseEntity.ok(MapperProducto.toDTO(creado));
     }
 
-    // Actualizar
+    /// Actualizar
     @PutMapping("/{id}")
     public ResponseEntity<ProductoDTO> actualizarProducto(@PathVariable Long id, @RequestBody ProductoDTO dto) {
-        Optional<Producto> optProducto = productoService.get(id);
-        if (optProducto.isEmpty()) return ResponseEntity.notFound().build();
-
-        Producto producto = optProducto.get();
-        MapperProducto.updateEntityFromDTO(producto, dto);
-        productoService.update(producto);
-        return ResponseEntity.ok(MapperProducto.toDTO(producto));
+        var actualizado = productoService.update(id, dto);
+        return ResponseEntity.ok(MapperProducto.toDTO(actualizado));
     }
 
+    // Eliminar
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarProducto(@PathVariable Long id) {
-        // este if verifica si el producto existe
-        if (!productoService.get(id).isPresent()) {
-            return ResponseEntity.notFound().build(); // si no existe, retorna 404
-        }
-        // sino, elimina el producto
         productoService.delete(id);
         return ResponseEntity.noContent().build();
     }
-
 }

@@ -1,5 +1,6 @@
 package com.example.uade.tpo.ecommerce_grupo10.entity.__mappers__;
 
+import com.example.uade.tpo.ecommerce_grupo10.entity.Categoria;
 import com.example.uade.tpo.ecommerce_grupo10.entity.Producto;
 import com.example.uade.tpo.ecommerce_grupo10.entity.__dto__.ProductoDTO;
 
@@ -10,32 +11,32 @@ public class MapperProducto {
 
     // metodo que convierte un Producto a ProductoDTO
     public static ProductoDTO toDTO(Producto p){
-        Long categoriaId = null; //! hay que cambiar esto cuando tengamos categoria
-
-        String imagenURL = null; //! hay que ver si las imagenes van aca
-
-        return new ProductoDTO(
-            p.getId(),
-            p.getTitulo(),
-            p.getDescripcion(),
-            p.getPrecio(),
-            imagenURL,
-            categoriaId,
-            p.getStock()
-        );
+        if (p == null)
+            return null;
+        return ProductoDTO.builder()
+                .id(p.getId())
+                .titulo(p.getTitulo())
+                .descripcion(p.getDescripcion())
+                .precio(p.getPrecio())
+                .stock(p.getStock())
+                .imagenUrl(p.getImagenUrl())
+                .categoriaId(p.getCategoria() != null ? p.getCategoria().getId() : null)
+                .categoriaNombre(p.getCategoria() != null ? p.getCategoria().getNombre() : null)
+                .build();
     }
 
-    // este metodo actualiza un Producto a partir de un ProductoDTO
-    // sirve para mantener la entidad actualizada con los cambios del DTO
-    public static void updateEntityFromDTO(Producto p, ProductoDTO dto) {
-        if (dto.getTitulo() != null)
-            p.setTitulo(dto.getTitulo());
-        if (dto.getDescripcion() != null)
-            p.setDescripcion(dto.getDescripcion());
-        if (dto.getPrecio() != null)
-            p.setPrecio(dto.getPrecio());
-        if (dto.getStock() != null)
-            p.setStock(dto.getStock());
-        // categoria e imagen mas adelante
+    public void updateEntityFromDto(ProductoDTO dto, Producto entity, Categoria categoria) {
+        if (dto.getTitulo() != null) entity.setTitulo(dto.getTitulo());
+        entity.setDescripcion(dto.getDescripcion());
+        if (dto.getPrecio() != null) entity.setPrecio(dto.getPrecio());
+        if (dto.getStock() != null) entity.setStock(dto.getStock());
+        entity.setImagenUrl(dto.getImagenUrl());
+        if (categoria != null) entity.setCategoria(categoria);
+    }
+
+    public Producto toEntity(ProductoDTO dto, Categoria categoria) {
+        Producto p = new Producto();
+        updateEntityFromDto(dto, p, categoria);
+        return p;
     }
 }

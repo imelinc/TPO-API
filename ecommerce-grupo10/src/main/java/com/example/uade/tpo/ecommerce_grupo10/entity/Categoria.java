@@ -30,6 +30,6 @@ public class Categoria {
     @Column(nullable = false, length = 100)
     private String nombre;
 
-    @OneToMany(mappedBy= "categoria") // relacion uno a muchos con la entidad Producto
+    @OneToMany
     private Set<Producto> productos = new HashSet<>(); // Set de productos asociados a la categoria
 }

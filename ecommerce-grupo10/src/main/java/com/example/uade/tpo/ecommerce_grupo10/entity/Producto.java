@@ -7,9 +7,11 @@ import com.example.uade.tpo.ecommerce_grupo10.entity.cart.ItemCarrito;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
@@ -46,11 +48,13 @@ public class Producto {
     @ManyToOne
     private Usuario vendedor; // Relacion muchos a uno con la entidad Usuario, cada producto tiene un vendedor asociado
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "categoria_id", nullable = false)
     private Categoria categoria; // Relacion muchos a uno con la entidad Categoria, cada producto pertenece a una categoria
 
-    @OneToMany(mappedBy="producto") // relacion uno a muchos con la entidad ImagenProducto
-    private Set<ImagenProducto> imagenes = new HashSet<>(); // Set de imagenes
+    // ! por ahora una sola imagen
+    @Column(length = 500)
+    private String imagenUrl;
 
     @OneToOne(mappedBy="producto") // relacion uno a uno con la entidad DescuentoProducto
     private DescuentoProducto descuento; // Cada producto puede tener un descuento asociado (los descuentos no son acumulables)

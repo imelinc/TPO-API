@@ -1,30 +1,14 @@
 package com.example.uade.tpo.ecommerce_grupo10.entity.__dto__;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Builder 
+@Getter @Setter @AllArgsConstructor @NoArgsConstructor
 public class CategoriaDTO {
     private Long id;
     private String nombre;
-
-    public CategoriaDTO() {
-    }
-
-    public CategoriaDTO(Long id, String nombre) {
-        this.id = id;
-        this.nombre = nombre;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
 }

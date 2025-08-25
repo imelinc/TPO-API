@@ -16,5 +16,6 @@ public interface ProductoRepository extends JpaRepository<Producto, Long>{
     // Busquedas
     Page<Producto> findByTituloContainingIgnoreCaseAndStockGreaterThan(String titulo, int stock, Pageable pageable);
     Page<Producto> findByCategoriaIdAndStockGreaterThan(Long categoriaId, int stock, Pageable pageable); 
+    Page<Producto> findByPrecioBetweenAndStockGreaterThan(Double precioMin, Double precioMax, int stock, Pageable pageable);
 
 }
