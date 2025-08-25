@@ -28,17 +28,20 @@ public class ProductoController {
     @Autowired
     private ProductoService productoService;
 
-    // este metodo devuelve todos los productos disponibles (stock > 0)
-    // con paginacion opcional
-    // si no se pasan los parametros page y size, devuelve todos los productos
-    // si se pasan, devuelve la pagina correspondiente
+    // Catalogo disponible, stock > 0
     @GetMapping
-    public ResponseEntity<Page<Producto>> getProductos(
-            @RequestParam(required = false) Integer page,
-            @RequestParam(required = false) Integer size) {
-        if (page == null || size == null) 
-            return ResponseEntity.ok(productoService.listarDisponibles(PageRequest.of(0, Integer.MAX_VALUE)));
-        return ResponseEntity.ok(productoService.listarDisponibles(PageRequest.of(page, size)));
+    public Page<Producto> listarProductos(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return productoService.listarDisponibles(PageRequest.of(page, size));
+    }
+
+    // Buscar por titulo
+    @GetMapping("/buscar")
+    public Page<Producto> buscarPorTitulo(@RequestParam String titulo,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return productoService.buscarPorTitulo(titulo, PageRequest.of(page, size));
     }
 
     // metodo para obtener un producto por ID
@@ -48,15 +51,6 @@ public class ProductoController {
         if (result.isPresent())
             return ResponseEntity.ok(result.get());
         return ResponseEntity.noContent().build();
-    }
-
-    // Catalogo disponible, stock > 0
-    @GetMapping
-    public Page<Producto> listarProductos(
-        @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "10") int size
-    ) {
-       return productoService.listarDisponibles(PageRequest.of(page, size));
     }
 
     // Filtrar por categoria
