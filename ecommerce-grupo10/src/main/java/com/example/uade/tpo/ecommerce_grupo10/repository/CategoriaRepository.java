@@ -9,6 +9,6 @@ import com.example.uade.tpo.ecommerce_grupo10.entity.Categoria;
 public interface CategoriaRepository extends JpaRepository<Categoria, Long>{
 
     // metodo para verificar si existe una categoria por nombre
-    boolean existeByNombre(String nombre);
+    boolean existsByNombre(String nombre);
 
 }

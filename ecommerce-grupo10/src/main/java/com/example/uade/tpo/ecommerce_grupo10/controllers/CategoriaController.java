@@ -81,8 +81,8 @@ public class CategoriaController {
 
     // validar nombre unico desde el front
     @GetMapping("/existe")
-    public ResponseEntity<Boolean> existePorNombre(@RequestParam String nombre) {
-        return ResponseEntity.ok(categoriaService.existePorNombre(nombre));
+    public ResponseEntity<Boolean> existsPorNombre(@RequestParam String nombre) {
+        return ResponseEntity.ok(categoriaService.existsPorNombre(nombre));
     }
     
 

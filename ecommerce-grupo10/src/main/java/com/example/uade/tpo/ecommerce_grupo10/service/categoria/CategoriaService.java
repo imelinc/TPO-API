@@ -19,6 +19,6 @@ public interface CategoriaService {
     Categoria actualizar(Long id, Categoria categoria);
     void eliminar(Long id);
 
-    boolean existePorNombre(String nombre);
+    boolean existsPorNombre(String nombre);
     
 } 

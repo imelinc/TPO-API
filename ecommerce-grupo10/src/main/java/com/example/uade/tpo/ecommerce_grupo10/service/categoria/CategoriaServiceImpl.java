@@ -42,7 +42,7 @@ public class CategoriaServiceImpl implements CategoriaService {
         // hago unas sim
         if (categoria.getNombre() == null || categoria.getNombre().isBlank())
             throw new IllegalArgumentException("El nombre de la categoria no puede ser nulo o vacio");
-        if (categoriaRepository.existeByNombre(categoria.getNombre()))
+        if (categoriaRepository.existsByNombre(categoria.getNombre()))
             throw new IllegalArgumentException("Ya existe una categoria con el nombre " + categoria.getNombre());
         return categoriaRepository.save(categoria);
     }
@@ -53,7 +53,7 @@ public class CategoriaServiceImpl implements CategoriaService {
 
         // validamos
         if (categoria.getNombre() != null && !categoria.getNombre().isBlank() && !categoria.getNombre().equals(existente.getNombre())) {
-            if (categoriaRepository.existeByNombre(categoria.getNombre()))
+            if (categoriaRepository.existsByNombre(categoria.getNombre()))
                 throw new IllegalArgumentException("Ya existe una categoria con el nombre " + categoria.getNombre());
             existente.setNombre(categoria.getNombre());
         }
@@ -70,7 +70,7 @@ public class CategoriaServiceImpl implements CategoriaService {
 
     @Override
     public boolean existePorNombre(String nombre) {
-        return categoriaRepository.existeByNombre(nombre);
+        return categoriaRepository.existsByNombre(nombre);
     }
 
 
