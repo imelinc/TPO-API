@@ -1,6 +1,5 @@
 package com.example.uade.tpo.ecommerce_grupo10.service.producto;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -13,17 +12,14 @@ import com.example.uade.tpo.ecommerce_grupo10.exceptions.RecursoNoEncontrado;
 import com.example.uade.tpo.ecommerce_grupo10.repository.CategoriaRepository;
 import com.example.uade.tpo.ecommerce_grupo10.repository.ProductoRepository;
 
-@Service
+import lombok.RequiredArgsConstructor;
+
+@Service @RequiredArgsConstructor
 public class ProductoServiceImpl implements ProductoService{
 
-    @Autowired // inyeccion de la dependencia del repositorio
-    ProductoRepository productoRepository;
-
-    @Autowired
-    private CategoriaRepository categoriaRepository;
-
-    @Autowired
-    private MapperProducto mapperProducto;
+    private final ProductoRepository productoRepository;
+    private final CategoriaRepository categoriaRepository;
+    private final MapperProducto mapperProducto;
 
     private Categoria getCategoria(Long categoriaId){
         return categoriaRepository.findById(categoriaId).orElseThrow(() -> new RecursoNoEncontrado("Categoria no encontrada"));
