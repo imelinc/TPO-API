@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.uade.tpo.ecommerce_grupo10.entity.Producto;
+import com.example.uade.tpo.ecommerce_grupo10.entity.__dto__.ProductoDTO;
+import com.example.uade.tpo.ecommerce_grupo10.entity.__mappers__.MapperProducto;
 import com.example.uade.tpo.ecommerce_grupo10.service.ProductoService;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -63,9 +65,14 @@ public class ProductoController {
 
     // Crear un producto
     @PostMapping
-    public ResponseEntity<Producto> crearProducto(@RequestBody Producto producto) {
-        Producto creado = productoService.save(producto);
-        return ResponseEntity.ok(creado); // devuelve si el producto fue creado
+    public ResponseEntity<ProductoDTO> crearProducto(@RequestBody ProductoDTO dto) {
+        Producto p = new Producto();
+        p.setTitulo(dto.getTitulo());
+        p.setDescripcion(dto.getDescripcion());
+        p.setPrecio(dto.getPrecio());
+        p.setCategoria(null); //! cuando tengamos categoria vemos 
+        Producto creado = productoService.save(p);
+        return ResponseEntity.ok(MapperProducto.toDTO(creado));
     }
 
     // Actualizar

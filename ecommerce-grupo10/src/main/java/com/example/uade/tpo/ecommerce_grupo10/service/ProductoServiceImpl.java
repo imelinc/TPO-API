@@ -60,5 +60,5 @@ public class ProductoServiceImpl implements ProductoService{
         if (p.getStock()<0) throw new IllegalArgumentException("El stock no puede ser negativo");
         if (p.getTitulo() == null || p.getTitulo().isBlank()) throw new IllegalArgumentException("Titulo requerido."); 
     }
-    
+
 }
