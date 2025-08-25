@@ -20,7 +20,8 @@ public class MapperProducto {
             p.getDescripcion(),
             p.getPrecio(),
             imagenURL,
-            categoriaId
+            categoriaId,
+            p.getStock()
         );
     }
 }

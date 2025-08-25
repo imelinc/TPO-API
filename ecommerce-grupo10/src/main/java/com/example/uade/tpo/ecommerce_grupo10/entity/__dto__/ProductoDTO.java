@@ -7,17 +7,19 @@ public class ProductoDTO {
     private Double precio;
     private String imagenUrl;
     private Long categoriaId;
+    private Integer stock;
 
     public ProductoDTO() {
     }
 
-    public ProductoDTO(Long id, String titulo, String descripcion, Double precio, String imagenUrl, Long categoriaId) {
+    public ProductoDTO(Long id, String titulo, String descripcion, Double precio, String imagenUrl, Long categoriaId, Integer stock) {
         this.id = id;
         this.titulo = titulo;
         this.descripcion = descripcion;
         this.precio = precio;
         this.imagenUrl = imagenUrl;
         this.categoriaId = categoriaId;
+        this.stock = stock;
     }
 
     public Long getId() {
@@ -67,4 +69,14 @@ public class ProductoDTO {
     public void setCategoriaId(Long categoriaId) {
         this.categoriaId = categoriaId;
     }
+
+    public Integer getStock() {
+        return stock;
+    }
+
+    public void setStock(Integer stock) {
+        this.stock = stock;
+    }
+
+    
 }
