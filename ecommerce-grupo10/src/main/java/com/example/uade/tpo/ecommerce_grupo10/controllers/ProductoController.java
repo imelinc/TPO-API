@@ -71,21 +71,23 @@ public class ProductoController {
         p.setDescripcion(dto.getDescripcion());
         p.setPrecio(dto.getPrecio());
         p.setCategoria(null); //! cuando tengamos categoria vemos 
+        if (dto.getStock() == null)
+            throw new IllegalArgumentException("Stock requerido");
+        MapperProducto.updateEntityFromDTO(p, dto);
         Producto creado = productoService.save(p);
         return ResponseEntity.ok(MapperProducto.toDTO(creado));
     }
 
     // Actualizar
     @PutMapping("/{id}")
-    public ResponseEntity<Void> actualizarProducto(@PathVariable Long id, @RequestBody Producto producto) {
-        // se verifica si existe el producto
-        if (!productoService.get(id).isPresent()) {
-            return ResponseEntity.notFound().build(); // si no existe, 404
-        }
-        // si existe, se actualiza
-        producto.setId(id);
+    public ResponseEntity<ProductoDTO> actualizarProducto(@PathVariable Long id, @RequestBody ProductoDTO dto) {
+        Optional<Producto> optProducto = productoService.get(id);
+        if (optProducto.isEmpty()) return ResponseEntity.notFound().build();
+
+        Producto producto = optProducto.get();
+        MapperProducto.updateEntityFromDTO(producto, dto);
         productoService.update(producto);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(MapperProducto.toDTO(producto));
     }
 
     @DeleteMapping("/{id}")

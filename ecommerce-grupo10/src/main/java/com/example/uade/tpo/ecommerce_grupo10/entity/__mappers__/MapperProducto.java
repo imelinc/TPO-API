@@ -24,4 +24,18 @@ public class MapperProducto {
             p.getStock()
         );
     }
+
+    // este metodo actualiza un Producto a partir de un ProductoDTO
+    // sirve para mantener la entidad actualizada con los cambios del DTO
+    public static void updateEntityFromDTO(Producto p, ProductoDTO dto) {
+        if (dto.getTitulo() != null)
+            p.setTitulo(dto.getTitulo());
+        if (dto.getDescripcion() != null)
+            p.setDescripcion(dto.getDescripcion());
+        if (dto.getPrecio() != null)
+            p.setPrecio(dto.getPrecio());
+        if (dto.getStock() != null)
+            p.setStock(dto.getStock());
+        // categoria e imagen mas adelante
+    }
 }
