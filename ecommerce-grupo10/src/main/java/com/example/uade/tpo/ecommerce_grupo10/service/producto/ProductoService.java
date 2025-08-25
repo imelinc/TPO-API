@@ -1,4 +1,4 @@
-package com.example.uade.tpo.ecommerce_grupo10.service;
+package com.example.uade.tpo.ecommerce_grupo10.service.producto;
 
 import java.util.Optional;
 

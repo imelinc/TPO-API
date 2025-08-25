@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.uade.tpo.ecommerce_grupo10.entity.Producto;
 import com.example.uade.tpo.ecommerce_grupo10.entity.__dto__.ProductoDTO;
 import com.example.uade.tpo.ecommerce_grupo10.entity.__mappers__.MapperProducto;
-import com.example.uade.tpo.ecommerce_grupo10.service.ProductoService;
+import com.example.uade.tpo.ecommerce_grupo10.service.producto.ProductoService;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
