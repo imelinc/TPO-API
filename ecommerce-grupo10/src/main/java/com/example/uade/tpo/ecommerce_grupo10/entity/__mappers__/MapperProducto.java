@@ -1,16 +1,19 @@
 package com.example.uade.tpo.ecommerce_grupo10.entity.__mappers__;
 
+import org.springframework.stereotype.Component;
+
 import com.example.uade.tpo.ecommerce_grupo10.entity.Categoria;
 import com.example.uade.tpo.ecommerce_grupo10.entity.Producto;
 import com.example.uade.tpo.ecommerce_grupo10.entity.__dto__.ProductoDTO;
 
+@Component
 public class MapperProducto {
     private MapperProducto() {
         // Constructor privado para evitar instanciación
     }
 
     // metodo que convierte un Producto a ProductoDTO
-    public static ProductoDTO toDTO(Producto p){
+    public ProductoDTO toDTO(Producto p){
         if (p == null)
             return null;
         return ProductoDTO.builder()

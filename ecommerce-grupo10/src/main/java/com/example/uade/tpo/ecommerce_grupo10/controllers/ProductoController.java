@@ -2,7 +2,6 @@ package com.example.uade.tpo.ecommerce_grupo10.controllers;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +13,8 @@ import com.example.uade.tpo.ecommerce_grupo10.entity.__dto__.ProductoDTO;
 import com.example.uade.tpo.ecommerce_grupo10.entity.__mappers__.MapperProducto;
 import com.example.uade.tpo.ecommerce_grupo10.service.producto.ProductoService;
 
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,12 +24,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 
-@RestController
+@RestController @RequiredArgsConstructor
 @RequestMapping("/productos")
 public class ProductoController {
-    
-    @Autowired
-    private ProductoService productoService;
+
+    private final ProductoService productoService;
+    private final MapperProducto mapperProducto;
 
     // Catálogo disponible (stock > 0)
     @GetMapping
@@ -38,7 +39,7 @@ public class ProductoController {
 
         Page<Producto> result = productoService.listarDisponibles(PageRequest.of(page, size));
         return result.getContent().stream()
-                .map(MapperProducto::toDTO)
+                .map(mapperProducto::toDTO)
                 .toList();
     }
 
@@ -51,7 +52,7 @@ public class ProductoController {
 
         Page<Producto> result = productoService.buscarPorTitulo(titulo, PageRequest.of(page, size));
         return result.getContent().stream()
-                .map(MapperProducto::toDTO)
+                .map(mapperProducto::toDTO)
                 .toList();
     }
 
@@ -59,7 +60,7 @@ public class ProductoController {
     @GetMapping("/{id}")
     public ResponseEntity<ProductoDTO> getProductoById(@PathVariable Long id) {
         Producto p = productoService.get(id); // lanza 404 si no existe
-        return ResponseEntity.ok(MapperProducto.toDTO(p));
+        return ResponseEntity.ok(mapperProducto.toDTO(p));
     }
 
     // Filtrar por categoria
@@ -71,7 +72,7 @@ public class ProductoController {
 
         Page<Producto> result = productoService.buscarPorCategoria(id, PageRequest.of(page, size));
         return result.getContent().stream()
-                .map(MapperProducto::toDTO)
+                .map(mapperProducto::toDTO)
                 .toList();
     }
 
@@ -79,14 +80,14 @@ public class ProductoController {
     @PostMapping
     public ResponseEntity<ProductoDTO> crearProducto(@RequestBody ProductoDTO dto) {
         var creado = productoService.save(dto);
-        return ResponseEntity.ok(MapperProducto.toDTO(creado));
+        return ResponseEntity.ok(mapperProducto.toDTO(creado));
     }
 
     /// Actualizar
     @PutMapping("/{id}")
     public ResponseEntity<ProductoDTO> actualizarProducto(@PathVariable Long id, @RequestBody ProductoDTO dto) {
         var actualizado = productoService.update(id, dto);
-        return ResponseEntity.ok(MapperProducto.toDTO(actualizado));
+        return ResponseEntity.ok(mapperProducto.toDTO(actualizado));
     }
 
     // Eliminar
