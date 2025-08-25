@@ -25,7 +25,7 @@ public class WishlistItem {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY) // lazy indica que la carga de la wishlist se realiza bajo demanda
     @JoinColumn(name = "wishlist_id")
     private Wishlist wishlist;
 
