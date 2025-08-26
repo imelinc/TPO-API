@@ -16,6 +16,6 @@ public interface ProductoService {
     Page<Producto> listarDisponibles(Pageable pageable); // productos con stock > 0
     Page<Producto> buscarPorTitulo(String titulo, Pageable pageable); // stock > 0
     Page<Producto> buscarPorCategoria(Long categoriaId, Pageable pageable); // stock > 0
-    Page<Producto> buscarPorPrecio(Double precioMin, Double precioMax, Pageable pageable); // stock > 0
+    Page<ProductoDTO> buscarPorPrecio(Double precioMin, Double precioMax, Pageable pageable); // stock > 0
 
 }

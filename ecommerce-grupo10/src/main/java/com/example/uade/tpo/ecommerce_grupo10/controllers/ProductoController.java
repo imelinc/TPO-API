@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,9 +19,9 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -84,7 +86,7 @@ public class ProductoController {
     }
 
     /// Actualizar
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<ProductoDTO> actualizarProducto(@PathVariable Long id, @RequestBody ProductoDTO dto) {
         var actualizado = productoService.update(id, dto);
         return ResponseEntity.ok(mapperProducto.toDTO(actualizado));
@@ -95,5 +97,15 @@ public class ProductoController {
     public ResponseEntity<Void> eliminarProducto(@PathVariable Long id) {
         productoService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // Buscar por precio
+    @GetMapping("/precio")
+    public ResponseEntity<Page<ProductoDTO>> buscarPorPrecio(
+            @RequestParam Double precioMin,
+            @RequestParam Double precioMax,
+            @PageableDefault(size = 10, sort = "precio") Pageable pageable) {
+
+        return ResponseEntity.ok(productoService.buscarPorPrecio(precioMin, precioMax, pageable));
     }
 }

@@ -29,12 +29,18 @@ public class MapperProducto {
     }
 
     public void updateEntityFromDto(ProductoDTO dto, Producto entity, Categoria categoria) {
-        if (dto.getTitulo() != null) entity.setTitulo(dto.getTitulo());
-        entity.setDescripcion(dto.getDescripcion());
-        if (dto.getPrecio() != null) entity.setPrecio(dto.getPrecio());
-        if (dto.getStock() != null) entity.setStock(dto.getStock());
-        entity.setImagenUrl(dto.getImagenUrl());
-        if (categoria != null) entity.setCategoria(categoria);
+        if (dto.getTitulo() != null)
+            entity.setTitulo(dto.getTitulo());
+        if (dto.getDescripcion() != null)
+            entity.setDescripcion(dto.getDescripcion());
+        if (dto.getPrecio() != null)
+            entity.setPrecio(dto.getPrecio());
+        if (dto.getStock() != null)
+            entity.setStock(dto.getStock());
+        if (dto.getImagenUrl() != null)
+            entity.setImagenUrl(dto.getImagenUrl());
+        if (categoria != null)
+            entity.setCategoria(categoria);
     }
 
     public Producto toEntity(ProductoDTO dto, Categoria categoria) {

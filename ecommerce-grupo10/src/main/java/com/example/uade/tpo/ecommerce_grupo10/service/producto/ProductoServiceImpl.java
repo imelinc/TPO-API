@@ -70,8 +70,9 @@ public class ProductoServiceImpl implements ProductoService{
     }
 
     @Override
-    public Page<Producto> buscarPorPrecio(Double precioMin, Double precioMax, Pageable pageable) {
-        return productoRepository.findByPrecioBetweenAndStockGreaterThan(precioMin, precioMax, 0, pageable);
+    public Page<ProductoDTO> buscarPorPrecio(Double min, Double max, Pageable pageable) {
+        return productoRepository.findByPrecioBetweenAndStockGreaterThan(min, max, 0, pageable)
+                .map(mapperProducto::toDTO);
     }
 
 }
