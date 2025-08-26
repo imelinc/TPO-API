@@ -12,7 +12,7 @@ public interface UsuarioService {
     UsuarioDTO crear(UsuarioCreateDTO dto);
     UsuarioDTO buscarPorId(Long id);
     Page<UsuarioDTO> listar(Pageable pageable);
-    Page<UsuarioDTO> buscar(String q, Pageable pageable);
+    Page<UsuarioDTO> buscar(String parametroBusqueda, Pageable pageable);
     Page<UsuarioDTO> listarPorRol(Rol rol, Pageable pageable);
     UsuarioDTO actualizar(Long id, UsuarioUpdateDTO dto);
     void eliminar(Long id);
