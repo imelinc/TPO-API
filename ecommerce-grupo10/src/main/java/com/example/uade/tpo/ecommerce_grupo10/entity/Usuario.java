@@ -73,6 +73,77 @@ public class Usuario {
     // orphanRemoval = true permite que al eliminar una orden de un usuario,
     // se elimine la orden de la base de datos si ya no tiene un usuario asociado
     private Set<Orden> compras = new HashSet<>();
+    
+    // metodos de conveniencia para asegurar las relaciones bidireccionales
 
+    public void agregarRol(Rol rol) {
+        if (rol == null)
+            return;
+        this.roles.add(rol);
+    }
+
+    public void agregarProducto(Producto producto) {
+        if (producto == null)
+            return;
+        // evitar duplicados
+        if (this.productos.add(producto)) {
+            producto.setVendedor(this);
+        }
+    }
+
+    public void quitarProducto(Producto producto) {
+        if (producto == null)
+            return;
+        if (this.productos.remove(producto)) {
+            // cortar la relación del otro lado solo si apuntaba a este usuario
+            if (producto.getVendedor() == this) {
+                producto.setVendedor(null);
+            }
+        }
+    }
+
+    public void agregarCompra(Orden orden) {
+        if (orden == null)
+            return;
+        if (this.compras.add(orden)) {
+            orden.setUsuario(this);
+        }
+    }
+
+    public void quitarCompra(Orden orden) {
+        if (orden == null)
+            return;
+        if (this.compras.remove(orden)) {
+            if (orden.getUsuario() == this) {
+                orden.setUsuario(null);
+            }
+        }
+    }
+
+    public void asignarCarrito(Carrito carrito) {
+        // desvincular carrito actual si existiera
+        if (this.carrito != null) {
+            Carrito actual = this.carrito;
+            this.carrito = null;
+            if (actual.getUsuario() == this) {
+                actual.setUsuario(null);
+            }
+        }
+        // vincular nuevo
+        if (carrito != null) {
+            this.carrito = carrito;
+            carrito.setUsuario(this); // lado dueño debe guardar la FK
+        }
+    }
+
+    public void desasignarCarrito() {
+        if (this.carrito != null) {
+            Carrito actual = this.carrito;
+            this.carrito = null;
+            if (actual.getUsuario() == this) {
+                actual.setUsuario(null);
+            }
+        }
+    }
 
 }
