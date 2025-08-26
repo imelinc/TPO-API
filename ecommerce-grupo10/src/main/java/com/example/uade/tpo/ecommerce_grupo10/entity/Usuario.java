@@ -37,7 +37,7 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.IDENTITY) // generacion del ID automaticamente
     private Long id;
 
-    @Column(nullable= false, length=100) // columna no puede ser nula y es un VARCHAR de 100 caracteres
+    @Column(nullable= false, length=100, unique = true) // columna no puede ser nula y es un VARCHAR de 100 caracteres
     private String username;
 
     @Column(nullable= false, length=100) // columna no puede ser nula y es un VARCHAR de 100 caracteres
@@ -46,7 +46,7 @@ public class Usuario {
     @Column(nullable= false, length=100) // columna no puede ser nula y es un VARCHAR de 100 caracteres
     private String nombreCompleto;
 
-    @Column(nullable= false, length=100) // columna no puede ser nula y es un VARCHAR de 100 caracteres
+    @Column(nullable= false, length=100, unique = true) // columna no puede ser nula y es un VARCHAR de 100 caracteres
     private String email;
 
     @Column(nullable= false, length=100) // columna no puede ser nula y es un VARCHAR de 100 caracteres
