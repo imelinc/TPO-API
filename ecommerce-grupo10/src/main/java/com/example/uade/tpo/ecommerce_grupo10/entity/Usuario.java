@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity // indica que es una entidad de JPA
-@Table(name = "Usuarios") // Le cambiamos el nombre a la tabla a "Usuarios"
+@Table(name = "usuarios") // Le cambiamos el nombre a la tabla a "usuarios"
 @Getter // genera todos los getters
 @Setter // genera todos los setters
 @NoArgsConstructor // genera el constructor por defecto

@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name="Items Ordenes")
+@Table(name="items_ordenes")
 @Getter // genera los getters
 @Setter // genera los setters
 @NoArgsConstructor // genera el constructor por defecto

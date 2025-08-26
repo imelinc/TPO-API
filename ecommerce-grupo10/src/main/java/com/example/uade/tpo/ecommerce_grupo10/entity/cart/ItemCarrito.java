@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name="Items Carrito")
+@Table(name="items_carrito")
 @Getter // genera los getters
 @Setter // genera los setters
 @NoArgsConstructor // genera el constructor por defecto
