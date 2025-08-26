@@ -1,19 +1,15 @@
-package com.example.uade.tpo.ecommerce_grupo10.entity.__dto__;
+package com.example.uade.tpo.ecommerce_grupo10.entity.__dto__.dtosUsuario;
 
 import java.util.Set;
 
 import com.example.uade.tpo.ecommerce_grupo10.entity.Rol;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Builder @Data
-@NoArgsConstructor @AllArgsConstructor
-public class UsuarioDTO {
-    private Long id;
+@Data
+public class UsuarioCreateDTO {
     private String username;
+    private String password;
     private String nombreCompleto;
     private String email;
     private String telefono;

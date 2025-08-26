@@ -3,7 +3,7 @@ package com.example.uade.tpo.ecommerce_grupo10.entity.__mappers__;
 import org.springframework.stereotype.Component;
 
 import com.example.uade.tpo.ecommerce_grupo10.entity.Usuario;
-import com.example.uade.tpo.ecommerce_grupo10.entity.__dto__.UsuarioDTO;
+import com.example.uade.tpo.ecommerce_grupo10.entity.__dto__.dtosUsuario.UsuarioDTO;
 
 @Component // component es para que Spring lo reconozca como un bean
 public class MapperUsuario {
