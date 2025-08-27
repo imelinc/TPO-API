@@ -50,7 +50,7 @@ public class ImagenProductoController {
         return ResponseEntity.ok(imagenProductoService.obtener(productoId, imagenId));
     }
 
-     // actualizar URL de una imagen
+    // actualizar URL de una imagen
     @PutMapping("/{imagenId}")
     public ResponseEntity<ImagenProductoDTO> actualizarUrl(
             @PathVariable Long productoId,

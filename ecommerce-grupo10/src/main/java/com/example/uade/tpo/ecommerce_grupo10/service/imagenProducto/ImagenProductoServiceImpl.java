@@ -3,6 +3,7 @@ package com.example.uade.tpo.ecommerce_grupo10.service.imagenProducto;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.uade.tpo.ecommerce_grupo10.entity.ImagenProducto;
 import com.example.uade.tpo.ecommerce_grupo10.entity.Producto;
@@ -11,6 +12,7 @@ import com.example.uade.tpo.ecommerce_grupo10.entity.__mappers__.MapperImagenPro
 import com.example.uade.tpo.ecommerce_grupo10.exceptions.RecursoNoEncontrado;
 import com.example.uade.tpo.ecommerce_grupo10.repository.ImagenProductoRepository;
 import com.example.uade.tpo.ecommerce_grupo10.repository.ProductoRepository;
+
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,7 +23,7 @@ public class ImagenProductoServiceImpl implements ImagenProductoService {
     private final ProductoRepository productoRepository;
     private final MapperImagenProducto mapperImagenProducto;
 
-    @Override
+    @Override @Transactional
     public ImagenProductoDTO agregarImagen(Long productoId, String url) {
         if (url == null || url.isBlank()) {
             throw new IllegalArgumentException("La URL de la imagen es obligatoria");
@@ -46,6 +48,7 @@ public class ImagenProductoServiceImpl implements ImagenProductoService {
     }
 
     @Override // listar las imagenes por cada producto por su id
+    @Transactional(readOnly = true)
     public List<ImagenProductoDTO> listarPorProducto(Long productoId) {
         return imagenRepository.findByProductoId(productoId)
                 .stream()
@@ -54,13 +57,14 @@ public class ImagenProductoServiceImpl implements ImagenProductoService {
     }
 
     @Override // obtener una imagen por su id y el id del producto
+    @Transactional(readOnly = true)
     public ImagenProductoDTO obtener(Long productoId, Long imagenId) {
         ImagenProducto img = imagenRepository.findByIdAndProductoId(imagenId, productoId)
                 .orElseThrow(() -> new RecursoNoEncontrado("Imagen no encontrada para este producto"));
         return mapperImagenProducto.toDTO(img);
     }
 
-    @Override
+    @Override @Transactional
     public ImagenProductoDTO actualizarUrl(Long productoId, Long imagenId, String nuevaUrl) {
         if (nuevaUrl == null || nuevaUrl.isBlank()) {
             throw new IllegalArgumentException("La nueva URL no puede estar vacía");
@@ -75,11 +79,11 @@ public class ImagenProductoServiceImpl implements ImagenProductoService {
             throw new IllegalArgumentException("Otra imagen ya usa esa URL para este producto");
         }
 
-        img.setUrl(nuevaUrl); // se actualiza la URL
+        img.setUrl(nuevaUrl); 
         return mapperImagenProducto.toDTO(img);
     }
 
-    @Override
+    @Override @Transactional
     public void eliminarImagen(Long productoId, Long imagenId) {
         ImagenProducto img = imagenRepository.findByIdAndProductoId(imagenId, productoId)
                 .orElseThrow(() -> new RecursoNoEncontrado("Imagen no encontrada para este producto"));
