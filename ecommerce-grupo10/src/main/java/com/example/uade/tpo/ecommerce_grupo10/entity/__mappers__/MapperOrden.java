@@ -13,15 +13,16 @@ import com.example.uade.tpo.ecommerce_grupo10.entity.__dto__.OrdenDTO;
 
 @Component
 public class MapperOrden {
-    
+
     public OrdenDTO toDTO(Orden o) {
-        if (o == null) return null;
+        if (o == null)
+            return null;
 
         Set<Long> itemIds = (o.getItems() == null)
                 ? Collections.emptySet()
                 : o.getItems().stream()
-                    .map(ItemOrden::getId)
-                    .collect(Collectors.toSet());
+                        .map(ItemOrden::getId)
+                        .collect(Collectors.toSet());
 
         Long usuarioId = (o.getUsuario() != null) ? o.getUsuario().getId() : null;
 
@@ -35,9 +36,9 @@ public class MapperOrden {
                 .build();
     }
 
-    
     public Orden toEntity(OrdenDTO dto, Usuario usuario, Set<ItemOrden> items) {
-        if (dto == null) return null;
+        if (dto == null)
+            return null;
 
         Orden o = new Orden();
         o.setId(dto.getId());

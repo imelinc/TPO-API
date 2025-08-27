@@ -13,8 +13,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class OrdenDTO {
     private Long id;
-    private String fechaCreacion; 
-    private String estado; 
+    private java.time.LocalDateTime fechaCreacion;
+    private String estado;
     private double total;
     private Long usuarioId;
     private Set<Long> itemIds;

@@ -22,9 +22,10 @@ import com.example.uade.tpo.ecommerce_grupo10.repository.UsuarioRepository;
 
 import lombok.RequiredArgsConstructor;
 
-@Service @RequiredArgsConstructor
+@Service
+@RequiredArgsConstructor
 public class OrdenServiceImpl implements OrdenService {
-    
+
     private final OrdenRepository ordenRepository;
     private final UsuarioRepository usuarioRepository;
     private final ItemOrdenRepository itemOrdenRepository;
@@ -36,16 +37,19 @@ public class OrdenServiceImpl implements OrdenService {
     @Override
     @Transactional
     public OrdenDTO crear(OrdenDTO dto) {
-        if (dto == null) throw new IllegalArgumentException("OrdenDTO no puede ser null");
-        if (dto.getUsuarioId() == null) throw new IllegalArgumentException("usuarioId es obligatorio");
-        if (dto.getItemIds() == null || dto.getItemIds().isEmpty()) throw new IllegalArgumentException("Debe incluir al menos un item");
+        if (dto == null)
+            throw new IllegalArgumentException("OrdenDTO no puede ser null");
+        if (dto.getUsuarioId() == null)
+            throw new IllegalArgumentException("usuarioId es obligatorio");
+        if (dto.getItemIds() == null || dto.getItemIds().isEmpty())
+            throw new IllegalArgumentException("Debe incluir al menos un item");
 
         // primero se resuelven las relaciones
         Usuario usuario = usuarioRepository.findById(dto.getUsuarioId())
-            .orElseThrow(() -> new RecursoNoEncontrado("Usuario no encontrado: " + dto.getUsuarioId()));
+                .orElseThrow(() -> new RecursoNoEncontrado("Usuario no encontrado: " + dto.getUsuarioId()));
 
         Set<ItemOrden> items = itemOrdenRepository.findAllById(dto.getItemIds())
-            .stream().collect(Collectors.toSet());
+                .stream().collect(Collectors.toSet());
 
         if (items.size() != dto.getItemIds().size()) {
             throw new IllegalArgumentException("Algunos ItemOrden no existen para los IDs provistos");
@@ -54,22 +58,22 @@ public class OrdenServiceImpl implements OrdenService {
         // despues armamos la entidad de la orden
         Orden orden = mapperOrden.toEntity(dto, usuario, items);
 
-        // fechaCreacion: si viene null o blank, setear ahora
-        if (orden.getFechaCreacion() == null || orden.getFechaCreacion().isBlank()) {
-            orden.setFechaCreacion(LocalDateTime.now().toString()); // TODO: migrar a LocalDateTime en la entidad
+        // fechaCreacion: si viene null, setear ahora
+        if (orden.getFechaCreacion() == null) {
+            orden.setFechaCreacion(LocalDateTime.now());
         }
 
         // calcular total en base a los items (precioUnitario * cantidad)
         double total = items.stream()
-            .mapToDouble(it -> {
-                double precio = it.getPrecioUnitario(); 
-                int cant = it.getCantidad();            
-                return precio * cant;
-            })
-            .sum();
+                .mapToDouble(it -> {
+                    double precio = it.getPrecioUnitario();
+                    int cant = it.getCantidad();
+                    return precio * cant;
+                })
+                .sum();
         orden.setTotal(total);
 
-        // setear relacion 
+        // setear relacion
         items.forEach(it -> it.setOrden(orden));
 
         // gaurdar
@@ -83,7 +87,7 @@ public class OrdenServiceImpl implements OrdenService {
     @Transactional(readOnly = true)
     public OrdenDTO obtenerPorId(Long id) {
         Orden o = ordenRepository.findById(id)
-            .orElseThrow(() -> new RecursoNoEncontrado("Orden no encontrada: " + id));
+                .orElseThrow(() -> new RecursoNoEncontrado("Orden no encontrada: " + id));
         return mapperOrden.toDTO(o);
     }
 
@@ -103,7 +107,7 @@ public class OrdenServiceImpl implements OrdenService {
     @Transactional
     public OrdenDTO actualizarEstado(Long id, String nuevoEstado) {
         Orden o = ordenRepository.findById(id)
-            .orElseThrow(() -> new RecursoNoEncontrado("Orden no encontrada: " + id));
+                .orElseThrow(() -> new RecursoNoEncontrado("Orden no encontrada: " + id));
 
         if (nuevoEstado == null || nuevoEstado.isBlank())
             throw new IllegalArgumentException("El estado no puede ser vacío");

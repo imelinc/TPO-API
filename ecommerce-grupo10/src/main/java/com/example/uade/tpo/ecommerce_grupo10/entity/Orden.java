@@ -18,23 +18,23 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name="ordenes")
+@Table(name = "ordenes")
 @Getter // genera los getters
 @Setter // genera los setters
 @NoArgsConstructor // genera el constructor por defecto
 @AllArgsConstructor // genera el constructor con todos los parametros
 public class Orden {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private String fechaCreacion;
+    private LocalDateTime fechaCreacion;
 
     @Column(nullable = false)
     private String estado; // PENDIENTE, COMPLETADA, CANCELADA
-    
+
     @Column(nullable = false)
     private double total;
 
