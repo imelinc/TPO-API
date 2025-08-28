@@ -31,7 +31,7 @@ public class UsuarioController {
 
     private final UsuarioService usuarioService;
 
-    // Listar todos los usuarios con paginación
+    // Listar todos los usuarios con paginacion
     @GetMapping
     public Page<UsuarioDTO> listarUsuarios(
             @RequestParam(defaultValue = "0") int page,
