@@ -1,5 +1,7 @@
 package com.example.uade.tpo.ecommerce_grupo10.service.usuario;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -15,15 +17,16 @@ import com.example.uade.tpo.ecommerce_grupo10.repository.UsuarioRepository;
 
 import lombok.RequiredArgsConstructor;
 
-@Service @RequiredArgsConstructor
-public class UsuarioServiceImpl implements UsuarioService{
+@Service
+@RequiredArgsConstructor
+public class UsuarioServiceImpl implements UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
     private final MapperUsuario mapperUsuario;
 
     @Override
     public UsuarioDTO crear(UsuarioCreateDTO dto) {
-        // validaciones 
+        // validaciones
         if (usuarioRepository.existsByUsername(dto.getUsername()))
             throw new IllegalArgumentException("El username ya está en uso");
         if (usuarioRepository.existsByEmail(dto.getEmail()))
@@ -31,6 +34,7 @@ public class UsuarioServiceImpl implements UsuarioService{
 
         Usuario u = new Usuario();
         u.setUsername(dto.getUsername());
+        u.setPassword(dto.getPassword()); // Agregado el password
         u.setNombreCompleto(dto.getNombreCompleto());
         u.setEmail(dto.getEmail());
         u.setTelefono(dto.getTelefono());
@@ -45,6 +49,18 @@ public class UsuarioServiceImpl implements UsuarioService{
     public UsuarioDTO buscarPorId(Long id) {
         Usuario u = usuarioRepository.findById(id).orElseThrow(() -> new RecursoNoEncontrado("Usuario no encontrado"));
         return mapperUsuario.toDTO(u);
+    }
+
+    @Override
+    public Optional<UsuarioDTO> buscarPorUsername(String username) {
+        return usuarioRepository.findByUsernameIgnoreCase(username)
+                .map(mapperUsuario::toDTO);
+    }
+
+    @Override
+    public Optional<UsuarioDTO> buscarPorEmail(String email) {
+        return usuarioRepository.findByEmailIgnoreCase(email)
+                .map(mapperUsuario::toDTO);
     }
 
     @Override
@@ -77,13 +93,25 @@ public class UsuarioServiceImpl implements UsuarioService{
         u.setDireccion(dto.getDireccion());
         u.setRoles(dto.getRoles());
 
-        return mapperUsuario.toDTO(u);
+        Usuario actualizado = usuarioRepository.save(u);
+        return mapperUsuario.toDTO(actualizado);
     }
 
     @Override
     public void eliminar(Long id) {
-        if (!usuarioRepository.existsById(id)) throw new RecursoNoEncontrado("Usuario no encontrado");
+        if (!usuarioRepository.existsById(id))
+            throw new RecursoNoEncontrado("Usuario no encontrado");
         usuarioRepository.deleteById(id);
+    }
+
+    @Override
+    public boolean existePorUsername(String username) {
+        return usuarioRepository.existsByUsername(username);
+    }
+
+    @Override
+    public boolean existePorEmail(String email) {
+        return usuarioRepository.existsByEmail(email);
     }
 
 }
