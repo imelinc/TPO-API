@@ -72,10 +72,10 @@ public class UsuarioController {
     }
 
     // Buscar usuario por email
-    @GetMapping("/email/{email}")
-    public ResponseEntity<UsuarioDTO> buscarPorEmail(@PathVariable String email) {
-        Optional<UsuarioDTO> usuario = usuarioService.buscarPorEmail(email);
-        return usuario.map(ResponseEntity::ok)
+    @GetMapping("/email")
+    public ResponseEntity<UsuarioDTO> buscarPorEmail(@RequestParam("value") String email) {
+        return usuarioService.buscarPorEmail(email)
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
