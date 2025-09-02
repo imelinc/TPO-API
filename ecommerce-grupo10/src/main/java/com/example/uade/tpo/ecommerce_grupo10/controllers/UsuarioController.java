@@ -22,6 +22,7 @@ import com.example.uade.tpo.ecommerce_grupo10.entity.__dto__.dtosUsuario.Usuario
 import com.example.uade.tpo.ecommerce_grupo10.entity.__dto__.dtosUsuario.UsuarioUpdateDTO;
 import com.example.uade.tpo.ecommerce_grupo10.service.usuario.UsuarioService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -101,7 +102,7 @@ public class UsuarioController {
 
     // Crear nuevo usuario
     @PostMapping
-    public ResponseEntity<UsuarioDTO> crearUsuario(@RequestBody UsuarioCreateDTO dto) {
+    public ResponseEntity<UsuarioDTO> crearUsuario(@Valid @RequestBody UsuarioCreateDTO dto) {
         UsuarioDTO usuarioCreado = usuarioService.crear(dto);
         return ResponseEntity.ok(usuarioCreado);
     }
@@ -110,7 +111,7 @@ public class UsuarioController {
     @PatchMapping("/{id}")
     public ResponseEntity<UsuarioDTO> actualizarUsuario(
             @PathVariable Long id,
-            @RequestBody UsuarioUpdateDTO dto) {
+            @Valid @RequestBody UsuarioUpdateDTO dto) {
 
         UsuarioDTO usuarioActualizado = usuarioService.actualizar(id, dto);
         return ResponseEntity.ok(usuarioActualizado);
