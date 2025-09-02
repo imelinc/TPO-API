@@ -40,7 +40,10 @@ public class Usuario {
     private String password;
 
     @Column(nullable= false, length=100) // columna no puede ser nula y es un VARCHAR de 100 caracteres
-    private String nombreCompleto;
+    private String nombre;
+    
+    @Column(nullable= false, length=100) // columna no puede ser nula y es un VARCHAR de 100 caracteres
+    private String apellido;
 
     @Column(nullable= false, length=100, unique = true) // columna no puede ser nula y es un VARCHAR de 100 caracteres
     private String email;

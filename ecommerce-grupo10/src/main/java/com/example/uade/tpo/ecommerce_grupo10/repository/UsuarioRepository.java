@@ -14,28 +14,33 @@ import com.example.uade.tpo.ecommerce_grupo10.entity.Rol;
 import com.example.uade.tpo.ecommerce_grupo10.entity.Usuario;
 
 @Repository
-public interface UsuarioRepository extends JpaRepository<Usuario, Long>{
+public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     // algunas busquedas basicas
     // usamos todas las posibilidades, por eso hacemos un ignorecase
     Optional<Usuario> findByUsernameIgnoreCase(String username);
+
     Optional<Usuario> findByEmailIgnoreCase(String email);
-    
+
     // ver si existen segun parametros
     // aca si respetamos case ya que puede ser mas critico
     boolean existsByUsername(String username);
+
     boolean existsByEmail(String email);
 
     List<Usuario> findByRol(Rol rol);
+
     Page<Usuario> findByRol(Rol rol, Pageable pageable);
 
-    // buscar por username, email o nombre completo
+    // buscar por username, email, nombre o apellido
     @Query("""
             SELECT u
             FROM Usuario u
             WHERE LOWER(u.username) LIKE LOWER(CONCAT('%', :parametroBusqueda, '%'))
             OR LOWER(u.email) LIKE LOWER(CONCAT('%', :parametroBusqueda, '%'))
-            OR LOWER(u.nombreCompleto) LIKE LOWER(CONCAT('%', :parametroBusqueda, '%'))
+            OR LOWER(u.nombre) LIKE LOWER(CONCAT('%', :parametroBusqueda, '%'))
+            OR LOWER(u.apellido) LIKE LOWER(CONCAT('%', :parametroBusqueda, '%'))
+            OR LOWER(CONCAT(u.nombre, ' ', u.apellido)) LIKE LOWER(CONCAT('%', :parametroBusqueda, '%'))
             """)
     Page<Usuario> search(@Param("parametroBusqueda") String parametroBusqueda, Pageable pageable);
 

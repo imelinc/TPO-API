@@ -35,7 +35,8 @@ public class UsuarioServiceImpl implements UsuarioService {
         Usuario u = new Usuario();
         u.setUsername(dto.getUsername());
         u.setPassword(dto.getPassword()); // Agregado el password
-        u.setNombreCompleto(dto.getNombreCompleto());
+        u.setNombre(dto.getNombre());
+        u.setApellido(dto.getApellido());
         u.setEmail(dto.getEmail());
         u.setTelefono(dto.getTelefono());
         u.setDireccion(dto.getDireccion());
@@ -87,7 +88,8 @@ public class UsuarioServiceImpl implements UsuarioService {
             throw new IllegalArgumentException("El email ya está en uso");
         }
 
-        u.setNombreCompleto(dto.getNombreCompleto());
+        u.setNombre(dto.getNombre());
+        u.setApellido(dto.getApellido());
         u.setEmail(dto.getEmail());
         u.setTelefono(dto.getTelefono());
         u.setDireccion(dto.getDireccion());

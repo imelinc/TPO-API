@@ -14,7 +14,8 @@ public class MapperUsuario {
         return UsuarioDTO.builder()
                 .id(u.getId())
                 .username(u.getUsername())
-                .nombreCompleto(u.getNombreCompleto())
+                .nombre(u.getNombre())
+                .apellido(u.getApellido())
                 .email(u.getEmail())
                 .telefono(u.getTelefono())
                 .direccion(u.getDireccion())
@@ -28,7 +29,8 @@ public class MapperUsuario {
         Usuario u = new Usuario();
         u.setId(dto.getId());
         u.setUsername(dto.getUsername());
-        u.setNombreCompleto(dto.getNombreCompleto());
+        u.setNombre(dto.getNombre());
+        u.setApellido(dto.getApellido());
         u.setEmail(dto.getEmail());
         u.setTelefono(dto.getTelefono());
         u.setDireccion(dto.getDireccion());
