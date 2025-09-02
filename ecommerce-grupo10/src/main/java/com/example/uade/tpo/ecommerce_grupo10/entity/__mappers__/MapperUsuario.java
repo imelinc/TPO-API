@@ -18,7 +18,7 @@ public class MapperUsuario {
                 .email(u.getEmail())
                 .telefono(u.getTelefono())
                 .direccion(u.getDireccion())
-                .roles(u.getRoles())
+                .rol(u.getRol())
                 .build();
     }
 
@@ -32,7 +32,7 @@ public class MapperUsuario {
         u.setEmail(dto.getEmail());
         u.setTelefono(dto.getTelefono());
         u.setDireccion(dto.getDireccion());
-        u.setRoles(dto.getRoles());
+        u.setRol(dto.getRol());
         return u;
     }
 }

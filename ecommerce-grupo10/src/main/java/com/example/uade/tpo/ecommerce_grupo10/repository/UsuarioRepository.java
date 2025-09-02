@@ -26,23 +26,8 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long>{
     boolean existsByUsername(String username);
     boolean existsByEmail(String email);
 
-    // filtrar por roles
-    @Query("""
-            SELECT u
-            FROM Usuario u
-            JOIN u.roles r
-            WHERE r = :rol
-            """)
-    List<Usuario> findAllByRol(@Param("rol") Rol rol);
-
-    // filtrar roles pero con paginacion
-    @Query("""
-            SELECT u
-            FROM Usuario u
-            JOIN u.roles r
-            WHERE r = :rol
-            """)
-    Page<Usuario> findAllByRol(@Param("rol") Rol rol, Pageable pageable);
+    List<Usuario> findByRol(Rol rol);
+    Page<Usuario> findByRol(Rol rol, Pageable pageable);
 
     // buscar por username, email o nombre completo
     @Query("""

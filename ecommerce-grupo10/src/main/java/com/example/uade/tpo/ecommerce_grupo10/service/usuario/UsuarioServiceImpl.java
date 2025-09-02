@@ -39,7 +39,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         u.setEmail(dto.getEmail());
         u.setTelefono(dto.getTelefono());
         u.setDireccion(dto.getDireccion());
-        u.setRoles(dto.getRoles());
+        u.setRol(dto.getRol());
 
         Usuario guardado = usuarioRepository.save(u);
         return mapperUsuario.toDTO(guardado);
@@ -75,7 +75,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public Page<UsuarioDTO> listarPorRol(Rol rol, Pageable pageable) {
-        return usuarioRepository.findAllByRol(rol, pageable).map(mapperUsuario::toDTO);
+        return usuarioRepository.findByRol(rol, pageable).map(mapperUsuario::toDTO);
     }
 
     @Override
@@ -91,7 +91,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         u.setEmail(dto.getEmail());
         u.setTelefono(dto.getTelefono());
         u.setDireccion(dto.getDireccion());
-        u.setRoles(dto.getRoles());
+        u.setRol(dto.getRol());
 
         Usuario actualizado = usuarioRepository.save(u);
         return mapperUsuario.toDTO(actualizado);
