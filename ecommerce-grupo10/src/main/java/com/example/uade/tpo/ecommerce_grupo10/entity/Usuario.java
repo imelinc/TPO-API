@@ -8,6 +8,8 @@ import com.example.uade.tpo.ecommerce_grupo10.entity.cart.Carrito;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -49,6 +51,7 @@ public class Usuario {
     @Column(nullable= false, length=100) // columna no puede ser nula y es un VARCHAR de 100 caracteres
     private String direccion;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable= false) // columna no puede ser nula
     private Rol rol; // rol del usuario (ADMIN, COMPRADOR, VENDEDOR)
 
