@@ -42,6 +42,8 @@ public class AuthService {
         u.setPassword(passwordEncoder.encode(req.getPassword()));
         u.setNombre(req.getNombre());
         u.setApellido(req.getApellido());
+        u.setTelefono(req.getTelefono());
+        u.setDireccion(req.getDireccion());
 
         // Si no viene rol, default COMPRADOR
         u.setRol(req.getRol() == null ? Rol.COMPRADOR : req.getRol());
@@ -49,10 +51,9 @@ public class AuthService {
 
         // creo un userDetail para el usuario registrado
         UserDetails userDetails = new User(
-            saved.getEmail(),
-            saved.getPassword(),
-            List.of(new SimpleGrantedAuthority("ROLE_" + saved.getRol().name()))
-        );
+                saved.getEmail(),
+                saved.getPassword(),
+                List.of(new SimpleGrantedAuthority("ROLE_" + saved.getRol().name())));
 
         String token = jwtService.generateToken(userDetails);
         return new AuthResponse(token);
@@ -69,9 +70,9 @@ public class AuthService {
         UserDetails userDetails = new User(
                 u.getEmail(),
                 u.getPassword(),
-                List.of(new SimpleGrantedAuthority("ROLE_" + u.getRol().name()))
-        );
+                List.of(new SimpleGrantedAuthority("ROLE_" + u.getRol().name())));
 
         String token = jwtService.generateToken(userDetails);
         return new AuthResponse(token);
-    }}
+    }
+}
