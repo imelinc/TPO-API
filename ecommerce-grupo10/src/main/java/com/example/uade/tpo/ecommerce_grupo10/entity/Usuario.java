@@ -6,17 +6,11 @@ import java.util.Set;
 import com.example.uade.tpo.ecommerce_grupo10.entity.cart.Carrito;
 
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -55,11 +49,8 @@ public class Usuario {
     @Column(nullable= false, length=100) // columna no puede ser nula y es un VARCHAR de 100 caracteres
     private String direccion;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "usuarios_roles", joinColumns = @JoinColumn(name = "usuario_id"))
-    @Enumerated(EnumType.STRING) // guarda el rol como un String en la base de datos
-    @Column(name = "rol")
-    private Set<Rol> roles = new HashSet<>(); // Set de roles del usuario, inicializado como un HashSet
+    @Column(nullable= false) // columna no puede ser nula
+    private Rol rol; // rol del usuario (ADMIN, COMPRADOR, VENDEDOR)
 
     @OneToOne(mappedBy= "usuario") 
     private Carrito carrito; // Relacion uno a uno con la entidad Carrito, cada usuario tiene un carrito asociado
@@ -75,12 +66,6 @@ public class Usuario {
     private Set<Orden> compras = new HashSet<>();
     
     // metodos de conveniencia para asegurar las relaciones bidireccionales
-
-    public void agregarRol(Rol rol) {
-        if (rol == null)
-            return;
-        this.roles.add(rol);
-    }
 
     public void agregarProducto(Producto producto) {
         if (producto == null)
