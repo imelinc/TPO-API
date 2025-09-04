@@ -1,0 +1,805 @@
+{
+    "info": {
+        "name": "Ecommerce API - Session Management",
+        "description": "API con manejo de sesiones y logout por roles",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:8080",
+            "type": "string"
+        },
+        {
+            "key": "access_token",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "current_role",
+            "value": "",
+            "type": "string"
+        }
+    ],
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "token",
+                "value": "{{access_token}}",
+                "type": "string"
+            }
+        ]
+    },
+    "item": [
+        {
+            "name": "🛒 FLUJO COMPRADOR",
+            "item": [
+                {
+                    "name": "1. Login COMPRADOR",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "    const response = pm.response.json();",
+                                    "    pm.collectionVariables.set('access_token', response.access_token);",
+                                    "    pm.collectionVariables.set('current_role', 'COMPRADOR');",
+                                    "    console.log('✅ Login COMPRADOR exitoso');",
+                                    "} else if (pm.response.code === 400 || pm.response.code === 500) {",
+                                    "    console.log('❌ Error en login:', pm.response.text());",
+                                    "} else {",
+                                    "    console.log('❌ Error inesperado:', pm.response.code);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"comprador@test.com\",\n  \"password\": \"password123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/auth/login",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "login"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "2. Ver Mi Carrito",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/carritos",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "carritos"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "3. Agregar Producto al Carrito",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"productoId\": 1,\n  \"cantidad\": 2\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/carritos/items",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "carritos",
+                                "items"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "4. Ver Wishlist",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/wishlists",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "wishlists"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "5. Hacer Checkout",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"metodoPago\": \"TARJETA_CREDITO\",\n  \"direccionEnvio\": \"Av. Corrientes 1234, CABA\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/checkout",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "checkout"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "6. Ver Mis Órdenes",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/ordenes",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "ordenes"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "7. Logout COMPRADOR",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "    pm.collectionVariables.set('access_token', '');",
+                                    "    pm.collectionVariables.set('current_role', '');",
+                                    "    console.log('✅ Logout exitoso');",
+                                    "} else {",
+                                    "    console.log('❌ Error en logout:', pm.response.text());",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/auth/logout",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "logout"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "🏪 FLUJO VENDEDOR",
+            "item": [
+                {
+                    "name": "1. Login VENDEDOR",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "    const response = pm.response.json();",
+                                    "    pm.collectionVariables.set('access_token', response.access_token);",
+                                    "    pm.collectionVariables.set('current_role', 'VENDEDOR');",
+                                    "    console.log('✅ Login VENDEDOR exitoso');",
+                                    "} else if (pm.response.code === 400 || pm.response.code === 500) {",
+                                    "    console.log('❌ Error en login:', pm.response.text());",
+                                    "} else {",
+                                    "    console.log('❌ Error inesperado:', pm.response.code);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"vendedor@test.com\",\n  \"password\": \"password123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/auth/login",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "login"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "2. Crear Producto",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"nombre\": \"Producto Vendedor\",\n  \"descripcion\": \"Descripción del producto\",\n  \"precio\": 99.99,\n  \"stock\": 10,\n  \"categoriaId\": 1\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/productos",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "productos"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "3. Listar Mis Productos",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/productos",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "productos"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "4. Actualizar Producto",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"nombre\": \"Producto Actualizado\",\n  \"descripcion\": \"Nueva descripción\",\n  \"precio\": 149.99,\n  \"stock\": 15,\n  \"categoriaId\": 1\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/productos/1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "productos",
+                                "1"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "5. Crear Categoría",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"nombre\": \"Nueva Categoría\",\n  \"descripcion\": \"Descripción de la categoría\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/categorias",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "categorias"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "6. Ver Órdenes de Mis Productos",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/ordenes",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "ordenes"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "7. Logout VENDEDOR",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "    pm.collectionVariables.set('access_token', '');",
+                                    "    pm.collectionVariables.set('current_role', '');",
+                                    "    console.log('✅ Logout exitoso');",
+                                    "} else {",
+                                    "    console.log('❌ Error en logout:', pm.response.text());",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/auth/logout",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "logout"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "👑 FLUJO ADMIN",
+            "item": [
+                {
+                    "name": "1. Login ADMIN",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "    const response = pm.response.json();",
+                                    "    pm.collectionVariables.set('access_token', response.access_token);",
+                                    "    pm.collectionVariables.set('current_role', 'ADMIN');",
+                                    "    console.log('✅ Login ADMIN exitoso');",
+                                    "} else if (pm.response.code === 400 || pm.response.code === 500) {",
+                                    "    console.log('❌ Error en login:', pm.response.text());",
+                                    "} else {",
+                                    "    console.log('❌ Error inesperado:', pm.response.code);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"admin@test.com\",\n  \"password\": \"admin123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/auth/login",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "login"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "2. Listar Todos los Usuarios",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/usuarios",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "usuarios"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "3. Cambiar Rol de Usuario",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"rol\": \"VENDEDOR\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/admin/usuarios/1/rol",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "admin",
+                                "usuarios",
+                                "1",
+                                "rol"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "4. Crear Producto (Admin)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"nombre\": \"Producto Admin\",\n  \"descripcion\": \"Producto creado por admin\",\n  \"precio\": 199.99,\n  \"stock\": 20,\n  \"categoriaId\": 1\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/productos",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "productos"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "5. Ver Todas las Órdenes",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/ordenes",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "ordenes"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "6. Eliminar Usuario",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/usuarios/5",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "usuarios",
+                                "5"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "7. Logout ADMIN",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "    pm.collectionVariables.set('access_token', '');",
+                                    "    pm.collectionVariables.set('current_role', '');",
+                                    "    console.log('✅ Logout exitoso');",
+                                    "} else {",
+                                    "    console.log('❌ Error en logout:', pm.response.text());",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/auth/logout",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "logout"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "🔄 CAMBIO DE USUARIO",
+            "item": [
+                {
+                    "name": "Test: Logout y Login Diferente",
+                    "event": [
+                        {
+                            "listen": "prerequest",
+                            "script": {
+                                "exec": [
+                                    "// 1. Login como VENDEDOR",
+                                    "pm.sendRequest({",
+                                    "    url: pm.collectionVariables.get('base_url') + '/auth/login',",
+                                    "    method: 'POST',",
+                                    "    header: {",
+                                    "        'Content-Type': 'application/json'",
+                                    "    },",
+                                    "    body: {",
+                                    "        mode: 'raw',",
+                                    "        raw: JSON.stringify({",
+                                    "            email: 'vendedor@test.com',",
+                                    "            password: 'password123'",
+                                    "        })",
+                                    "    }",
+                                    "}, function (err, response) {",
+                                    "    if (!err && response.code === 200) {",
+                                    "        const data = response.json();",
+                                    "        pm.collectionVariables.set('access_token', data.access_token);",
+                                    "        console.log('✅ VENDEDOR logueado correctamente');",
+                                    "        ",
+                                    "        // 2. Intentar login como COMPRADOR sin logout",
+                                    "        pm.sendRequest({",
+                                    "            url: pm.collectionVariables.get('base_url') + '/auth/login',",
+                                    "            method: 'POST',",
+                                    "            header: {",
+                                    "                'Content-Type': 'application/json',",
+                                    "                'Authorization': 'Bearer ' + data.access_token",
+                                    "            },",
+                                    "            body: {",
+                                    "                mode: 'raw',",
+                                    "                raw: JSON.stringify({",
+                                    "                    email: 'comprador@test.com',",
+                                    "                    password: 'password123'",
+                                    "                })",
+                                    "            }",
+                                    "        }, function (err2, response2) {",
+                                    "            if (response2.code === 400 || response2.code === 500) {",
+                                    "                console.log('✅ Correctamente bloqueado login sin logout:', response2.json());",
+                                    "            } else {",
+                                    "                console.log('❌ No se bloqueó el login sin logout');",
+                                    "            }",
+                                    "            ",
+                                    "            // 3. Hacer logout del VENDEDOR",
+                                    "            pm.sendRequest({",
+                                    "                url: pm.collectionVariables.get('base_url') + '/auth/logout',",
+                                    "                method: 'POST',",
+                                    "                header: {",
+                                    "                    'Authorization': 'Bearer ' + data.access_token",
+                                    "                }",
+                                    "            }, function (err3, response3) {",
+                                    "                if (!err3 && response3.code === 200) {",
+                                    "                    console.log('✅ Logout VENDEDOR exitoso');",
+                                    "                    pm.collectionVariables.set('access_token', '');",
+                                    "                }",
+                                    "            });",
+                                    "        });",
+                                    "    } else {",
+                                    "        console.log('❌ Error en login VENDEDOR inicial');",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"comprador@test.com\",\n  \"password\": \"password123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/auth/login",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "login"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "📝 REGISTRO DE USUARIOS",
+            "item": [
+                {
+                    "name": "Registrar COMPRADOR",
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"username\": \"comprador_test\",\n  \"email\": \"comprador@test.com\",\n  \"password\": \"password123\",\n  \"nombre\": \"Juan\",\n  \"apellido\": \"Comprador\",\n  \"telefono\": \"1234567890\",\n  \"direccion\": \"Av. Corrientes 1234\",\n  \"rol\": \"COMPRADOR\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/auth/register",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "register"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Registrar VENDEDOR",
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"username\": \"vendedor_test\",\n  \"email\": \"vendedor@test.com\",\n  \"password\": \"password123\",\n  \"nombre\": \"María\",\n  \"apellido\": \"Vendedora\",\n  \"telefono\": \"0987654321\",\n  \"direccion\": \"Av. Santa Fe 5678\",\n  \"rol\": \"VENDEDOR\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/auth/register",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "register"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Registrar ADMIN",
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"username\": \"admin_test\",\n  \"email\": \"admin@test.com\",\n  \"password\": \"admin123\",\n  \"nombre\": \"Carlos\",\n  \"apellido\": \"Administrador\",\n  \"telefono\": \"1122334455\",\n  \"direccion\": \"Av. 9 de Julio 999\",\n  \"rol\": \"ADMIN\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/auth/register",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "register"
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}

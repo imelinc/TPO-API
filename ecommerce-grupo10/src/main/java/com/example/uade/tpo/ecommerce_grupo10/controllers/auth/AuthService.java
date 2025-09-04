@@ -27,6 +27,7 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
+    private final TokenBlacklistService tokenBlacklistService;
 
     public AuthResponse register(RegisterRequest req) {
         if (usuarioRepository.existsByUsername(req.getUsername())) {
@@ -60,6 +61,26 @@ public class AuthService {
     }
 
     public AuthResponse authenticate(AuthRequest req) {
+        return authenticate(req, null);
+    }
+
+    public AuthResponse authenticate(AuthRequest req, String authHeader) {
+        // Verificar si ya hay una sesión activa
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String currentToken = authHeader.substring(7);
+            if (!tokenBlacklistService.isTokenBlacklisted(currentToken)) {
+                try {
+                    String currentUserEmail = jwtService.extractUsername(currentToken);
+                    if (currentUserEmail != null && !currentUserEmail.isEmpty()) {
+                        throw new IllegalStateException(
+                                "Ya tienes una sesión activa. Debes cerrar sesión antes de iniciar sesión con otra cuenta.");
+                    }
+                } catch (Exception e) {
+                    // Si el token es inválido, continuamos con el login normal
+                }
+            }
+        }
+
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(req.getEmail(), req.getPassword()));
 
@@ -74,5 +95,12 @@ public class AuthService {
 
         String token = jwtService.generateToken(userDetails);
         return new AuthResponse(token);
+    }
+
+    public void logout(String authHeader) {
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            tokenBlacklistService.blacklistToken(token);
+        }
     }
 }
