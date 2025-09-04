@@ -1,0 +1,548 @@
+{
+    "info": {
+        "name": "2do Flujo: Flujo Vendedor",
+        "description": "Flujo completo de un vendedor desde registro hasta gestión de productos y órdenes",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "token",
+                "value": "{{jwt_token}}",
+                "type": "string"
+            }
+        ]
+    },
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:8080",
+            "type": "string"
+        },
+        {
+            "key": "jwt_token",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "user_id",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "producto_id",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "categoria_id",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "descuento_id",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "imagen_id",
+            "value": "",
+            "type": "string"
+        }
+    ],
+    "item": [
+        {
+            "name": "1. Registro de Usuario Vendedor",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "if (pm.response.code === 200 || pm.response.code === 201) {",
+                            "    var jsonData = pm.response.json();",
+                            "    pm.environment.set('user_id', jsonData.id);",
+                            "    console.log('Vendedor registrado con ID: ' + jsonData.id);",
+                            "}"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"email\": \"vendedor@example.com\",\n  \"password\": \"Password123!\",\n  \"nombre\": \"María\",\n  \"apellido\": \"González\",\n  \"direccion\": \"Av. Santa Fe 2500\",\n  \"telefono\": \"11-5678-9012\",\n  \"rol\": \"VENDEDOR\"\n}"
+                },
+                "url": {
+                    "raw": "{{base_url}}/auth/register",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "auth",
+                        "register"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "2. Login Usuario Vendedor",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "if (pm.response.code === 200) {",
+                            "    var jsonData = pm.response.json();",
+                            "    pm.environment.set('jwt_token', jsonData.token);",
+                            "    console.log('Token JWT obtenido: ' + jsonData.token.substring(0, 50) + '...');",
+                            "}"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"email\": \"vendedor@example.com\",\n  \"password\": \"Password123!\"\n}"
+                },
+                "url": {
+                    "raw": "{{base_url}}/auth/login",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "auth",
+                        "login"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "3. Ver Categorías Existentes",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "if (pm.response.code === 200) {",
+                            "    var jsonData = pm.response.json();",
+                            "    if (jsonData.length > 0) {",
+                            "        pm.environment.set('categoria_id', jsonData[0].id);",
+                            "        console.log('Categoría seleccionada: ' + jsonData[0].nombre + ' (ID: ' + jsonData[0].id + ')');",
+                            "    }",
+                            "}"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/categorias",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "categorias"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "4. Crear Nueva Categoría",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "if (pm.response.code === 200 || pm.response.code === 201) {",
+                            "    var jsonData = pm.response.json();",
+                            "    pm.environment.set('categoria_id', jsonData.id);",
+                            "    console.log('Nueva categoría creada con ID: ' + jsonData.id);",
+                            "}"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"nombre\": \"Electrónicos Premium\",\n  \"descripcion\": \"Productos electrónicos de alta gama y calidad\"\n}"
+                },
+                "url": {
+                    "raw": "{{base_url}}/categorias",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "categorias"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "5. Crear Nuevo Producto",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "if (pm.response.code === 200 || pm.response.code === 201) {",
+                            "    var jsonData = pm.response.json();",
+                            "    pm.environment.set('producto_id', jsonData.id);",
+                            "    console.log('Producto creado con ID: ' + jsonData.id);",
+                            "}"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"nombre\": \"iPhone 15 Pro\",\n  \"descripcion\": \"Último modelo de iPhone con chip A17 Pro\",\n  \"precio\": 1299.99,\n  \"stock\": 50,\n  \"categoriaId\": {{categoria_id}}\n}"
+                },
+                "url": {
+                    "raw": "{{base_url}}/productos",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "productos"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "6. Ver Mis Productos",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/productos/mis-productos",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "productos",
+                        "mis-productos"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "7. Agregar Imagen al Producto",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "if (pm.response.code === 200 || pm.response.code === 201) {",
+                            "    var jsonData = pm.response.json();",
+                            "    pm.environment.set('imagen_id', jsonData.id);",
+                            "    console.log('Imagen agregada con ID: ' + jsonData.id);",
+                            "}"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"url\": \"https://example.com/images/iphone15pro-front.jpg\",\n  \"altText\": \"iPhone 15 Pro vista frontal\",\n  \"esPrincipal\": true\n}"
+                },
+                "url": {
+                    "raw": "{{base_url}}/imagen-producto/producto/{{producto_id}}",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "imagen-producto",
+                        "producto",
+                        "{{producto_id}}"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "8. Crear Descuento para el Producto",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "if (pm.response.code === 200 || pm.response.code === 201) {",
+                            "    var jsonData = pm.response.json();",
+                            "    pm.environment.set('descuento_id', jsonData.id);",
+                            "    console.log('Descuento creado con ID: ' + jsonData.id);",
+                            "}"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"nombre\": \"Descuento Lanzamiento\",\n  \"descripcion\": \"10% de descuento por lanzamiento\",\n  \"tipoDescuento\": \"PORCENTAJE\",\n  \"valor\": 10.0,\n  \"fechaInicio\": \"2024-01-15T00:00:00\",\n  \"fechaFin\": \"2024-02-15T23:59:59\",\n  \"activo\": true,\n  \"productoId\": {{producto_id}}\n}"
+                },
+                "url": {
+                    "raw": "{{base_url}}/descuento-producto",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "descuento-producto"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "9. Actualizar Stock del Producto",
+            "request": {
+                "method": "PUT",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"nombre\": \"iPhone 15 Pro\",\n  \"descripcion\": \"Último modelo de iPhone con chip A17 Pro - Actualizado\",\n  \"precio\": 1199.99,\n  \"stock\": 75,\n  \"categoriaId\": {{categoria_id}}\n}"
+                },
+                "url": {
+                    "raw": "{{base_url}}/productos/{{producto_id}}",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "productos",
+                        "{{producto_id}}"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "10. Ver Todas las Órdenes (Ventas)",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/ordenes",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "ordenes"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "11. Ver Órdenes por Estado",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/ordenes/estado/PENDIENTE",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "ordenes",
+                        "estado",
+                        "PENDIENTE"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "12. Ver Detalle de Producto Creado",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/productos/{{producto_id}}",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "productos",
+                        "{{producto_id}}"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "13. Ver Imágenes del Producto",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/imagen-producto/producto/{{producto_id}}",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "imagen-producto",
+                        "producto",
+                        "{{producto_id}}"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "14. Ver Descuentos del Producto",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/descuento-producto/producto/{{producto_id}}",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "descuento-producto",
+                        "producto",
+                        "{{producto_id}}"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "15. Actualizar Categoría",
+            "request": {
+                "method": "PUT",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"nombre\": \"Electrónicos Premium Actualizado\",\n  \"descripcion\": \"Productos electrónicos de alta gama, calidad premium y última tecnología\"\n}"
+                },
+                "url": {
+                    "raw": "{{base_url}}/categorias/{{categoria_id}}",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "categorias",
+                        "{{categoria_id}}"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "16. Crear Segundo Producto",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"nombre\": \"MacBook Pro M3\",\n  \"descripcion\": \"Laptop profesional con chip M3 de Apple\",\n  \"precio\": 2499.99,\n  \"stock\": 25,\n  \"categoriaId\": {{categoria_id}}\n}"
+                },
+                "url": {
+                    "raw": "{{base_url}}/productos",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "productos"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "17. Ver Mi Perfil de Vendedor",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/auth/perfil",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "auth",
+                        "perfil"
+                    ]
+                }
+            },
+            "response": []
+        }
+    ]
+}

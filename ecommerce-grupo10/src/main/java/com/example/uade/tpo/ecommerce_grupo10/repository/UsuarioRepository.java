@@ -32,6 +32,8 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     Page<Usuario> findByRol(Rol rol, Pageable pageable);
 
+    long countByRol(Rol rol);
+
     // buscar por username, email, nombre o apellido
     @Query("""
             SELECT u

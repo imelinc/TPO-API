@@ -1,0 +1,456 @@
+{
+    "info": {
+        "name": "1er Flujo: Flujo Comprador",
+        "description": "Flujo completo de un comprador desde registro hasta compra",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "token",
+                "value": "{{jwt_token}}",
+                "type": "string"
+            }
+        ]
+    },
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:8080",
+            "type": "string"
+        },
+        {
+            "key": "jwt_token",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "user_id",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "carrito_id",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "producto_id",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "orden_id",
+            "value": "",
+            "type": "string"
+        }
+    ],
+    "item": [
+        {
+            "name": "1. Registro de Usuario Comprador",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "if (pm.response.code === 200 || pm.response.code === 201) {",
+                            "    var jsonData = pm.response.json();",
+                            "    pm.environment.set('user_id', jsonData.id);",
+                            "    console.log('Usuario registrado con ID: ' + jsonData.id);",
+                            "}"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"email\": \"comprador@example.com\",\n  \"password\": \"Password123!\",\n  \"nombre\": \"Juan\",\n  \"apellido\": \"Pérez\",\n  \"direccion\": \"Av. Corrientes 1234\",\n  \"telefono\": \"11-4567-8900\",\n  \"rol\": \"COMPRADOR\"\n}"
+                },
+                "url": {
+                    "raw": "{{base_url}}/auth/register",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "auth",
+                        "register"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "2. Login Usuario Comprador",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "if (pm.response.code === 200) {",
+                            "    var jsonData = pm.response.json();",
+                            "    pm.environment.set('jwt_token', jsonData.token);",
+                            "    console.log('Token JWT obtenido: ' + jsonData.token.substring(0, 50) + '...');",
+                            "}"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"email\": \"comprador@example.com\",\n  \"password\": \"Password123!\"\n}"
+                },
+                "url": {
+                    "raw": "{{base_url}}/auth/login",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "auth",
+                        "login"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "3. Ver Productos Disponibles",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "if (pm.response.code === 200) {",
+                            "    var jsonData = pm.response.json();",
+                            "    if (jsonData.length > 0) {",
+                            "        pm.environment.set('producto_id', jsonData[0].id);",
+                            "        console.log('Producto seleccionado: ' + jsonData[0].nombre + ' (ID: ' + jsonData[0].id + ')');",
+                            "    }",
+                            "}"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/productos/publicos",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "productos",
+                        "publicos"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "4. Ver Detalle de Producto",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/productos/publicos/{{producto_id}}",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "productos",
+                        "publicos",
+                        "{{producto_id}}"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "5. Obtener Mi Carrito",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "if (pm.response.code === 200) {",
+                            "    var jsonData = pm.response.json();",
+                            "    pm.environment.set('carrito_id', jsonData.id);",
+                            "    console.log('Carrito ID: ' + jsonData.id);",
+                            "}"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/carrito/mi-carrito",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "carrito",
+                        "mi-carrito"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "6. Agregar Producto al Carrito",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"productoId\": {{producto_id}},\n  \"cantidad\": 2\n}"
+                },
+                "url": {
+                    "raw": "{{base_url}}/carrito/agregar",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "carrito",
+                        "agregar"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "7. Ver Items del Carrito",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/item-carrito/carrito/{{carrito_id}}",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "item-carrito",
+                        "carrito",
+                        "{{carrito_id}}"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "8. Agregar a Wishlist (Opcional)",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"productoId\": {{producto_id}}\n}"
+                },
+                "url": {
+                    "raw": "{{base_url}}/wishlist/agregar",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "wishlist",
+                        "agregar"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "9. Ver Mi Wishlist",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/wishlist/mi-wishlist",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "wishlist",
+                        "mi-wishlist"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "10. Realizar Checkout (Comprar)",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "if (pm.response.code === 200 || pm.response.code === 201) {",
+                            "    var jsonData = pm.response.json();",
+                            "    pm.environment.set('orden_id', jsonData.id);",
+                            "    console.log('Orden creada con ID: ' + jsonData.id);",
+                            "    console.log('Total de la orden: $' + jsonData.total);",
+                            "}"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"metodoPago\": \"TARJETA_CREDITO\",\n  \"direccionEnvio\": \"Av. Corrientes 1234, CABA\"\n}"
+                },
+                "url": {
+                    "raw": "{{base_url}}/checkout/procesar",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "checkout",
+                        "procesar"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "11. Ver Mi Orden Creada",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/ordenes/{{orden_id}}",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "ordenes",
+                        "{{orden_id}}"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "12. Ver Todas Mis Órdenes",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/ordenes/mis-ordenes",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "ordenes",
+                        "mis-ordenes"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "13. Ver Items de la Orden",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/item-orden/orden/{{orden_id}}",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "item-orden",
+                        "orden",
+                        "{{orden_id}}"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "14. Actualizar Mi Perfil",
+            "request": {
+                "method": "PUT",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"nombre\": \"Juan Carlos\",\n  \"apellido\": \"Pérez González\",\n  \"direccion\": \"Av. Corrientes 1234, Piso 5\",\n  \"telefono\": \"11-4567-8901\"\n}"
+                },
+                "url": {
+                    "raw": "{{base_url}}/auth/perfil",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "auth",
+                        "perfil"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "15. Ver Mi Perfil Actualizado",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/auth/perfil",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "auth",
+                        "perfil"
+                    ]
+                }
+            },
+            "response": []
+        }
+    ]
+}

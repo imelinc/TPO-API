@@ -1,0 +1,443 @@
+{
+    "info": {
+        "name": "3er Flujo: Gestión de Administrador",
+        "description": "Flujo completo del rol ADMIN para gestión de usuarios y sistema",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "token",
+                "value": "{{jwt_token}}",
+                "type": "string"
+            }
+        ]
+    },
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:8080",
+            "type": "string"
+        },
+        {
+            "key": "jwt_token",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "admin_id",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "user_id_to_manage",
+            "value": "",
+            "type": "string"
+        }
+    ],
+    "item": [
+        {
+            "name": "1. Login como Admin (Primer Admin Manual)",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "if (pm.response.code === 200) {",
+                            "    var jsonData = pm.response.json();",
+                            "    pm.environment.set('jwt_token', jsonData.token);",
+                            "    console.log('Token JWT Admin obtenido: ' + jsonData.token.substring(0, 50) + '...');",
+                            "}"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"email\": \"admin@ecommerce.com\",\n  \"password\": \"AdminPassword123!\"\n}"
+                },
+                "url": {
+                    "raw": "{{base_url}}/auth/login",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "auth",
+                        "login"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "2. Ver Todos los Usuarios",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "if (pm.response.code === 200) {",
+                            "    var jsonData = pm.response.json();",
+                            "    if (jsonData.length > 0) {",
+                            "        // Buscar un usuario que no sea ADMIN para gestionar",
+                            "        for (let i = 0; i < jsonData.length; i++) {",
+                            "            if (jsonData[i].rol !== 'ADMIN') {",
+                            "                pm.environment.set('user_id_to_manage', jsonData[i].id);",
+                            "                console.log('Usuario seleccionado para gestionar: ' + jsonData[i].email + ' (ID: ' + jsonData[i].id + ', Rol: ' + jsonData[i].rol + ')');",
+                            "                break;",
+                            "            }",
+                            "        }",
+                            "    }",
+                            "}"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/usuarios",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "usuarios"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "3. Ver Usuario Específico",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/usuarios/{{user_id_to_manage}}",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "usuarios",
+                        "{{user_id_to_manage}}"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "4. Promover Usuario a Admin",
+            "request": {
+                "method": "PATCH",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": ""
+                },
+                "url": {
+                    "raw": "{{base_url}}/admin/promover/{{user_id_to_manage}}",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "admin",
+                        "promover",
+                        "{{user_id_to_manage}}"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "5. Ver Usuario Promovido",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/usuarios/{{user_id_to_manage}}",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "usuarios",
+                        "{{user_id_to_manage}}"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "6. Degradar Usuario de Admin",
+            "request": {
+                "method": "PATCH",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"nuevoRol\": \"VENDEDOR\"\n}"
+                },
+                "url": {
+                    "raw": "{{base_url}}/admin/degradar/{{user_id_to_manage}}",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "admin",
+                        "degradar",
+                        "{{user_id_to_manage}}"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "7. Ver Usuario Degradado",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/usuarios/{{user_id_to_manage}}",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "usuarios",
+                        "{{user_id_to_manage}}"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "8. Buscar Usuarios por Email",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/usuarios/buscar/email?email=vendedor@example.com",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "usuarios",
+                        "buscar",
+                        "email"
+                    ],
+                    "query": [
+                        {
+                            "key": "email",
+                            "value": "vendedor@example.com"
+                        }
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "9. Buscar Usuarios por Rol",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/usuarios/buscar/rol?rol=COMPRADOR",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "usuarios",
+                        "buscar",
+                        "rol"
+                    ],
+                    "query": [
+                        {
+                            "key": "rol",
+                            "value": "COMPRADOR"
+                        }
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "10. Actualizar Usuario (Admin puede editar cualquiera)",
+            "request": {
+                "method": "PUT",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"nombre\": \"Nombre Actualizado por Admin\",\n  \"apellido\": \"Apellido Actualizado\",\n  \"direccion\": \"Dirección actualizada por administrador\",\n  \"telefono\": \"11-9999-0000\",\n  \"rol\": \"COMPRADOR\"\n}"
+                },
+                "url": {
+                    "raw": "{{base_url}}/usuarios/{{user_id_to_manage}}",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "usuarios",
+                        "{{user_id_to_manage}}"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "11. Eliminar Usuario",
+            "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/usuarios/{{user_id_to_manage}}",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "usuarios",
+                        "{{user_id_to_manage}}"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "12. Verificar Usuario Eliminado",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/usuarios/{{user_id_to_manage}}",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "usuarios",
+                        "{{user_id_to_manage}}"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "13. Ver Todas las Órdenes del Sistema",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/ordenes",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "ordenes"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "14. Cambiar Estado de Orden",
+            "request": {
+                "method": "PATCH",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"estado\": \"ENVIADO\"\n}"
+                },
+                "url": {
+                    "raw": "{{base_url}}/ordenes/1/estado",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "ordenes",
+                        "1",
+                        "estado"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "15. Ver Todos los Productos del Sistema",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/productos",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "productos"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "16. Ver Todas las Categorías",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/categorias",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "categorias"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "17. Ver Mi Perfil de Admin",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/auth/perfil",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "auth",
+                        "perfil"
+                    ]
+                }
+            },
+            "response": []
+        }
+    ]
+}

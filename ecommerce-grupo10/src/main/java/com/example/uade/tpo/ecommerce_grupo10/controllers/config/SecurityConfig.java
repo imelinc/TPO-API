@@ -45,6 +45,7 @@ public class SecurityConfig {
 
                         // Endpoints solo para ADMIN
                         .requestMatchers("/usuarios/**").hasRole("ADMIN")
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
 
                         // Endpoints compartidos (ambos roles pueden ver órdenes)
                         .requestMatchers("/ordenes/**").authenticated()
