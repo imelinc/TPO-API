@@ -32,4 +32,10 @@ public class AuthController {
         return ResponseEntity.ok(authService.authenticate(request));
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponse> login(
+            @Valid @RequestBody AuthRequest request) {
+        return ResponseEntity.ok(authService.authenticate(request));
+    }
+
 }

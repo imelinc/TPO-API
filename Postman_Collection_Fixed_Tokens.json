@@ -1,0 +1,518 @@
+{
+    "info": {
+        "name": "Ecommerce API - Fixed Token Management",
+        "description": "Colección con manejo automático de tokens por usuario",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:8080",
+            "type": "string"
+        },
+        {
+            "key": "comprador_token",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "vendedor_token",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "admin_token",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "current_token",
+            "value": "",
+            "type": "string"
+        }
+    ],
+    "item": [
+        {
+            "name": "Authentication",
+            "item": [
+                {
+                    "name": "1. Login COMPRADOR",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "    const response = pm.response.json();",
+                                    "    pm.collectionVariables.set('comprador_token', response.access_token);",
+                                    "    pm.collectionVariables.set('current_token', response.access_token);",
+                                    "    console.log('✅ Token COMPRADOR actualizado:', response.access_token);",
+                                    "} else {",
+                                    "    console.log('❌ Error en login COMPRADOR:', pm.response.text());",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"comprador@test.com\",\n  \"password\": \"password123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/auth/login",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "login"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "2. Login VENDEDOR",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "    const response = pm.response.json();",
+                                    "    pm.collectionVariables.set('vendedor_token', response.access_token);",
+                                    "    pm.collectionVariables.set('current_token', response.access_token);",
+                                    "    console.log('✅ Token VENDEDOR actualizado:', response.access_token);",
+                                    "} else {",
+                                    "    console.log('❌ Error en login VENDEDOR:', pm.response.text());",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"vendedor@test.com\",\n  \"password\": \"password123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/auth/login",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "login"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "3. Login ADMIN",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "    const response = pm.response.json();",
+                                    "    pm.collectionVariables.set('admin_token', response.access_token);",
+                                    "    pm.collectionVariables.set('current_token', response.access_token);",
+                                    "    console.log('✅ Token ADMIN actualizado:', response.access_token);",
+                                    "} else {",
+                                    "    console.log('❌ Error en login ADMIN:', pm.response.text());",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"admin@test.com\",\n  \"password\": \"admin123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/auth/login",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "login"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Switch Users",
+            "item": [
+                {
+                    "name": "Switch to COMPRADOR",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.collectionVariables.set('current_token', pm.collectionVariables.get('comprador_token'));",
+                                    "console.log('🔄 Cambiado a COMPRADOR');"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/usuarios/perfil",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "usuarios",
+                                "perfil"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Switch to VENDEDOR",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.collectionVariables.set('current_token', pm.collectionVariables.get('vendedor_token'));",
+                                    "console.log('🔄 Cambiado a VENDEDOR');"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/usuarios/perfil",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "usuarios",
+                                "perfil"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Switch to ADMIN",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.collectionVariables.set('current_token', pm.collectionVariables.get('admin_token'));",
+                                    "console.log('🔄 Cambiado a ADMIN');"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/usuarios/perfil",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "usuarios",
+                                "perfil"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Productos (VENDEDOR/ADMIN)",
+            "item": [
+                {
+                    "name": "Crear Producto",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{current_token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"nombre\": \"Producto Test\",\n  \"descripcion\": \"Descripción del producto\",\n  \"precio\": 99.99,\n  \"stock\": 10,\n  \"categoriaId\": 1\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/productos",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "productos"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Listar Productos",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{current_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/productos",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "productos"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Carrito (COMPRADOR)",
+            "item": [
+                {
+                    "name": "Ver Carrito",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{current_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/carritos",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "carritos"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Agregar al Carrito",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{current_token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"productoId\": 1,\n  \"cantidad\": 2\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/carritos/items",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "carritos",
+                                "items"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Test Flow Completo",
+            "item": [
+                {
+                    "name": "1. Login como VENDEDOR y crear producto",
+                    "event": [
+                        {
+                            "listen": "prerequest",
+                            "script": {
+                                "exec": [
+                                    "// Login como VENDEDOR",
+                                    "pm.sendRequest({",
+                                    "    url: pm.collectionVariables.get('base_url') + '/auth/login',",
+                                    "    method: 'POST',",
+                                    "    header: {",
+                                    "        'Content-Type': 'application/json'",
+                                    "    },",
+                                    "    body: {",
+                                    "        mode: 'raw',",
+                                    "        raw: JSON.stringify({",
+                                    "            email: 'vendedor@test.com',",
+                                    "            password: 'password123'",
+                                    "        })",
+                                    "    }",
+                                    "}, function (err, response) {",
+                                    "    if (!err && response.code === 200) {",
+                                    "        const data = response.json();",
+                                    "        pm.collectionVariables.set('vendedor_token', data.access_token);",
+                                    "        pm.collectionVariables.set('current_token', data.access_token);",
+                                    "        console.log('✅ VENDEDOR logueado correctamente');",
+                                    "    } else {",
+                                    "        console.log('❌ Error en login VENDEDOR');",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{current_token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"nombre\": \"Producto desde Flow\",\n  \"descripcion\": \"Creado en flow automático\",\n  \"precio\": 149.99,\n  \"stock\": 5,\n  \"categoriaId\": 1\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/productos",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "productos"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "2. Switch a COMPRADOR y agregar al carrito",
+                    "event": [
+                        {
+                            "listen": "prerequest",
+                            "script": {
+                                "exec": [
+                                    "// Login como COMPRADOR",
+                                    "pm.sendRequest({",
+                                    "    url: pm.collectionVariables.get('base_url') + '/auth/login',",
+                                    "    method: 'POST',",
+                                    "    header: {",
+                                    "        'Content-Type': 'application/json'",
+                                    "    },",
+                                    "    body: {",
+                                    "        mode: 'raw',",
+                                    "        raw: JSON.stringify({",
+                                    "            email: 'comprador@test.com',",
+                                    "            password: 'password123'",
+                                    "        })",
+                                    "    }",
+                                    "}, function (err, response) {",
+                                    "    if (!err && response.code === 200) {",
+                                    "        const data = response.json();",
+                                    "        pm.collectionVariables.set('comprador_token', data.access_token);",
+                                    "        pm.collectionVariables.set('current_token', data.access_token);",
+                                    "        console.log('✅ COMPRADOR logueado correctamente');",
+                                    "    } else {",
+                                    "        console.log('❌ Error en login COMPRADOR');",
+                                    "    }",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{current_token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"productoId\": 1,\n  \"cantidad\": 1\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/carritos/items",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "carritos",
+                                "items"
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    ],
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "token",
+                "value": "{{current_token}}",
+                "type": "string"
+            }
+        ]
+    }
+}
