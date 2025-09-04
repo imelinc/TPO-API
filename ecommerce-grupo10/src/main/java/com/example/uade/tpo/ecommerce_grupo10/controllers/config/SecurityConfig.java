@@ -27,10 +27,29 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(req -> req.requestMatchers("/auth/**")
-                        .permitAll()
-                        .anyRequest()
-                        .authenticated())
+                .authorizeHttpRequests(req -> req
+                        // Endpoints públicos
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/productos-publicos/**").permitAll()
+
+                        // Endpoints solo para COMPRADORES
+                        .requestMatchers("/carritos/**").hasRole("COMPRADOR")
+                        .requestMatchers("/checkout/**").hasRole("COMPRADOR")
+                        .requestMatchers("/wishlists/**").hasRole("COMPRADOR")
+
+                        // Endpoints solo para VENDEDORES
+                        .requestMatchers("/productos/**").hasAnyRole("VENDEDOR", "ADMIN")
+                        .requestMatchers("/categorias/**").hasAnyRole("VENDEDOR", "ADMIN")
+                        .requestMatchers("/descuentos/**").hasAnyRole("VENDEDOR", "ADMIN")
+                        .requestMatchers("/imagenes/**").hasAnyRole("VENDEDOR", "ADMIN")
+
+                        // Endpoints solo para ADMIN
+                        .requestMatchers("/usuarios/**").hasRole("ADMIN")
+
+                        // Endpoints compartidos (ambos roles pueden ver órdenes)
+                        .requestMatchers("/ordenes/**").authenticated()
+
+                        .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
