@@ -15,24 +15,29 @@ import com.example.uade.tpo.ecommerce_grupo10.entity.wishlist.WishlistItem;
 import com.example.uade.tpo.ecommerce_grupo10.repository.ProductoRepository;
 import com.example.uade.tpo.ecommerce_grupo10.repository.WishlistItemRepository;
 import com.example.uade.tpo.ecommerce_grupo10.repository.WishlistRepository;
+import com.example.uade.tpo.ecommerce_grupo10.service.wishlist.WishlistService;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class WishlistItemServiceImpl implements WishlistItemService{
-    
+public class WishlistItemServiceImpl implements WishlistItemService {
+
     private final WishlistRepository wishlistRepository;
     private final WishlistItemRepository itemRepository;
     private final ProductoRepository productoRepository;
+    private final WishlistService wishlistService;
     private final MapperWishlistItem mapperWishlistItem;
 
     @Override
-    @Transactional(readOnly = true)
     public List<WishlistItemDTO> listItems(Long usuarioId) {
+        // Crear o obtener la wishlist automáticamente
+        wishlistService.getOrCreateByUsuario(usuarioId);
+
         Wishlist wishlist = wishlistRepository.findByUsuarioId(usuarioId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Wishlist no encontrada para el usuario"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Wishlist no encontrada para el usuario"));
         return itemRepository.findAllByWishlistId(wishlist.getId())
                 .stream() // lo convierto a stream
                 .map(mapperWishlistItem::toDTO) // lo convierto a DTO
@@ -41,8 +46,12 @@ public class WishlistItemServiceImpl implements WishlistItemService{
 
     @Override
     public WishlistItemDTO addItem(Long usuarioId, Long productoId) {
+        // Crear o obtener la wishlist automáticamente
+        wishlistService.getOrCreateByUsuario(usuarioId);
+
         Wishlist wishlist = wishlistRepository.findByUsuarioId(usuarioId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Wishlist no encontrada para el usuario"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Wishlist no encontrada para el usuario"));
         Producto producto = productoRepository.findById(productoId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Producto no encontrado"));
 
@@ -62,7 +71,8 @@ public class WishlistItemServiceImpl implements WishlistItemService{
     @Override
     public void removeItem(Long usuarioId, Long productoId) {
         Wishlist wishlist = wishlistRepository.findByUsuarioId(usuarioId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Wishlist no encontrada para el usuario"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Wishlist no encontrada para el usuario"));
 
         if (!itemRepository.existsByWishlistIdAndProductoId(wishlist.getId(), productoId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Item no encontrado en la wishlist");
@@ -73,9 +83,9 @@ public class WishlistItemServiceImpl implements WishlistItemService{
     @Override
     @Transactional(readOnly = true)
     public boolean exists(Long usuarioId, Long productoId) {
-        Wishlist wishlist = wishlistRepository.findByUsuarioId(usuarioId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Wishlist no encontrada para el usuario"));
-        return itemRepository.existsByWishlistIdAndProductoId(wishlist.getId(), productoId);
+        return wishlistRepository.findByUsuarioId(usuarioId)
+                .map(wishlist -> itemRepository.existsByWishlistIdAndProductoId(wishlist.getId(), productoId))
+                .orElse(false); // Si no existe la wishlist, retorna false
     }
 
 }

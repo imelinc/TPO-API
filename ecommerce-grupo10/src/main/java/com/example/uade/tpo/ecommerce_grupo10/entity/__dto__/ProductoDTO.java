@@ -16,5 +16,7 @@ public class ProductoDTO {
     private Long categoriaId;
     private String categoriaNombre;
     private Integer stock;
+    private Long vendedorId;
+    private String vendedorNombre;
     
 }

@@ -6,11 +6,14 @@ import org.springframework.stereotype.Service;
 
 import com.example.uade.tpo.ecommerce_grupo10.entity.Categoria;
 import com.example.uade.tpo.ecommerce_grupo10.entity.Producto;
+import com.example.uade.tpo.ecommerce_grupo10.entity.Usuario;
 import com.example.uade.tpo.ecommerce_grupo10.entity.__dto__.ProductoDTO;
 import com.example.uade.tpo.ecommerce_grupo10.entity.__mappers__.MapperProducto;
 import com.example.uade.tpo.ecommerce_grupo10.exceptions.RecursoNoEncontrado;
 import com.example.uade.tpo.ecommerce_grupo10.repository.CategoriaRepository;
 import com.example.uade.tpo.ecommerce_grupo10.repository.ProductoRepository;
+import com.example.uade.tpo.ecommerce_grupo10.repository.UsuarioRepository;
+import com.example.uade.tpo.ecommerce_grupo10.service.security.SecurityService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,16 +22,28 @@ public class ProductoServiceImpl implements ProductoService{
 
     private final ProductoRepository productoRepository;
     private final CategoriaRepository categoriaRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final SecurityService securityService;
     private final MapperProducto mapperProducto;
 
     private Categoria getCategoria(Long categoriaId){
         return categoriaRepository.findById(categoriaId).orElseThrow(() -> new RecursoNoEncontrado("Categoria no encontrada"));
     }
 
+    private Usuario getCurrentUser() {
+        String email = securityService.getCurrentUserEmail();
+        if (email == null) {
+            throw new RecursoNoEncontrado("Usuario no autenticado");
+        }
+        return usuarioRepository.findByEmailIgnoreCase(email)
+                .orElseThrow(() -> new RecursoNoEncontrado("Usuario no encontrado"));
+    }
+
     @Override
     public Producto save(ProductoDTO dto) {
         var categoria = getCategoria(dto.getCategoriaId());
-        var entity = mapperProducto.toEntity(dto, categoria);
+        var vendedor = getCurrentUser();
+        var entity = mapperProducto.toEntity(dto, categoria, vendedor);
         return productoRepository.save(entity);
     }
 

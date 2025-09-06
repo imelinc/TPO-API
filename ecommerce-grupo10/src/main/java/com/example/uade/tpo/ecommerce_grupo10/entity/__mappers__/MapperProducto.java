@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 
 import com.example.uade.tpo.ecommerce_grupo10.entity.Categoria;
 import com.example.uade.tpo.ecommerce_grupo10.entity.Producto;
+import com.example.uade.tpo.ecommerce_grupo10.entity.Usuario;
 import com.example.uade.tpo.ecommerce_grupo10.entity.__dto__.ProductoDTO;
 
 @Component
@@ -25,6 +26,8 @@ public class MapperProducto {
                 .imagenUrl(p.getImagenUrl())
                 .categoriaId(p.getCategoria() != null ? p.getCategoria().getId() : null)
                 .categoriaNombre(p.getCategoria() != null ? p.getCategoria().getNombre() : null)
+                .vendedorId(p.getVendedor() != null ? p.getVendedor().getId() : null)
+                .vendedorNombre(p.getVendedor() != null ? p.getVendedor().getNombre() : null)
                 .build();
     }
 
@@ -43,9 +46,21 @@ public class MapperProducto {
             entity.setCategoria(categoria);
     }
 
+    public void updateEntityFromDto(ProductoDTO dto, Producto entity, Categoria categoria, Usuario vendedor) {
+        updateEntityFromDto(dto, entity, categoria);
+        if (vendedor != null)
+            entity.setVendedor(vendedor);
+    }
+
     public Producto toEntity(ProductoDTO dto, Categoria categoria) {
         Producto p = new Producto();
         updateEntityFromDto(dto, p, categoria);
+        return p;
+    }
+
+    public Producto toEntity(ProductoDTO dto, Categoria categoria, Usuario vendedor) {
+        Producto p = new Producto();
+        updateEntityFromDto(dto, p, categoria, vendedor);
         return p;
     }
 }
