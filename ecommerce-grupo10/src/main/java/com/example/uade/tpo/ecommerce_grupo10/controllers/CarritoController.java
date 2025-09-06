@@ -40,7 +40,7 @@ public class CarritoController {
     }
 
     // Actualizar cantidad
-    @PutMapping("/usuario/{usuarioId}/items/{productoId}")
+    @PatchMapping("/usuario/{usuarioId}/items/{productoId}")
     public ResponseEntity<CarritoDTO> actualizarCantidad(
             @PathVariable Long usuarioId,
             @PathVariable Long productoId,
