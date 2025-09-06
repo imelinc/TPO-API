@@ -17,8 +17,9 @@ import com.example.uade.tpo.ecommerce_grupo10.service.security.SecurityService;
 
 import lombok.RequiredArgsConstructor;
 
-@Service @RequiredArgsConstructor
-public class ProductoServiceImpl implements ProductoService{
+@Service
+@RequiredArgsConstructor
+public class ProductoServiceImpl implements ProductoService {
 
     private final ProductoRepository productoRepository;
     private final CategoriaRepository categoriaRepository;
@@ -26,8 +27,9 @@ public class ProductoServiceImpl implements ProductoService{
     private final SecurityService securityService;
     private final MapperProducto mapperProducto;
 
-    private Categoria getCategoria(Long categoriaId){
-        return categoriaRepository.findById(categoriaId).orElseThrow(() -> new RecursoNoEncontrado("Categoria no encontrada"));
+    private Categoria getCategoria(Long categoriaId) {
+        return categoriaRepository.findById(categoriaId)
+                .orElseThrow(() -> new RecursoNoEncontrado("Categoria no encontrada"));
     }
 
     private Usuario getCurrentUser() {
@@ -65,7 +67,6 @@ public class ProductoServiceImpl implements ProductoService{
         var entity = get(id); // lanza excepcion si no existe
         productoRepository.delete(entity);
     }
-
 
     // BUSQUEDAS
 

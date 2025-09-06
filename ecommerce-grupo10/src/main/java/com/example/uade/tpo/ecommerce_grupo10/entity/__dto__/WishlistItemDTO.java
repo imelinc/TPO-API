@@ -14,5 +14,11 @@ public class WishlistItemDTO {
     private Long wishlistId;
     private Long productoId;
     private String productoTitulo;
+    private String productoDescripcion;
+    private Double productoPrecio;
+    private String productoImagenUrl;
+    private Integer productoStock;
+    private Long vendedorId;
+    private String vendedorNombre;
     private LocalDateTime agregadoA;
 }

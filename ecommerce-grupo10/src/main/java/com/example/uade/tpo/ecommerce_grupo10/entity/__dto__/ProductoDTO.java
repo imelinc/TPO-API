@@ -6,7 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Builder
-@Data @NoArgsConstructor @AllArgsConstructor
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ProductoDTO {
     private Long id;
     private String titulo;
@@ -18,5 +20,5 @@ public class ProductoDTO {
     private Integer stock;
     private Long vendedorId;
     private String vendedorNombre;
-    
+
 }

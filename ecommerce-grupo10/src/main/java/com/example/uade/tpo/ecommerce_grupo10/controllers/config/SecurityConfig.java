@@ -36,6 +36,8 @@ public class SecurityConfig {
                         .requestMatchers("/carritos/**").hasRole("COMPRADOR")
                         .requestMatchers("/checkout/**").hasRole("COMPRADOR")
                         .requestMatchers("/wishlists/**").hasRole("COMPRADOR")
+                        .requestMatchers("/usuarios/*/wishlist/**").hasRole("COMPRADOR")
+                        .requestMatchers("/usuarios/*/carrito/**").hasRole("COMPRADOR")
 
                         // Endpoints solo para VENDEDORES
                         .requestMatchers("/productos/**").hasAnyRole("VENDEDOR", "ADMIN")

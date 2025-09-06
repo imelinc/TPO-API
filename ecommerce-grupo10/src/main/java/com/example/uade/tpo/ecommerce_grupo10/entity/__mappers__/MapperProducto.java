@@ -14,7 +14,7 @@ public class MapperProducto {
     }
 
     // metodo que convierte un Producto a ProductoDTO
-    public ProductoDTO toDTO(Producto p){
+    public ProductoDTO toDTO(Producto p) {
         if (p == null)
             return null;
         return ProductoDTO.builder()
