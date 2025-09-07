@@ -69,6 +69,6 @@ public class OrdenController {
     // DTO request interno para actualizar estado
     @Data
     public static class EstadoRequest {
-        private String estado; // PENDIENTE | COMPLETADA | CANCELADA
+        private String estado; // PENDIENTE | COMPLETADA 
     }
 }

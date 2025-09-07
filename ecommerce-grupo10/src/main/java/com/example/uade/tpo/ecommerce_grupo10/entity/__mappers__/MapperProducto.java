@@ -50,8 +50,12 @@ public class MapperProducto {
             // Intentar obtener descuento activo
             DescuentoProductoDTO descuento = descuentoProductoService.obtenerPorProducto(p.getId());
 
-            // Verificar si está activo y vigente
-            if (Boolean.TRUE.equals(descuento.getActivo()) && estaVigente(descuento)) {
+            // Verificar si está activo, vigente y tiene porcentaje válido
+            if (Boolean.TRUE.equals(descuento.getActivo()) &&
+                    estaVigente(descuento) &&
+                    descuento.getPorcentajeDescuento() != null &&
+                    descuento.getPorcentajeDescuento() > 0) {
+
                 double porcentaje = descuento.getPorcentajeDescuento();
                 double montoDescuento = p.getPrecio() * (porcentaje / 100.0);
                 double precioConDescuento = p.getPrecio() - montoDescuento;
@@ -63,6 +67,8 @@ public class MapperProducto {
             }
         } catch (RecursoNoEncontrado e) {
             // No hay descuento, ya está configurado como false
+        } catch (Exception e) {
+            // Cualquier otro error, no mostrar descuento
         }
 
         return dto;

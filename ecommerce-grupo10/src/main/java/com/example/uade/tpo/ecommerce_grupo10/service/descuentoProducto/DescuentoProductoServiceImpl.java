@@ -1,6 +1,7 @@
 package com.example.uade.tpo.ecommerce_grupo10.service.descuentoProducto;
 
 import java.util.Date;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -62,6 +63,14 @@ public class DescuentoProductoServiceImpl implements DescuentoProductoService {
                 .map(mapperDescuentoProducto::toDTO)
                 .orElseThrow(
                         () -> new RecursoNoEncontrado("El producto id=" + productoId + " no tiene descuento"));
+    }
+
+    // obtener los descuentos por producto sin lanzar excepción
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<DescuentoProductoDTO> obtenerPorProductoOptional(Long productoId) {
+        return descuentoProductoRepository.findByProductoId(productoId)
+                .map(mapperDescuentoProducto::toDTO);
     }
 
     // listar con paginacion

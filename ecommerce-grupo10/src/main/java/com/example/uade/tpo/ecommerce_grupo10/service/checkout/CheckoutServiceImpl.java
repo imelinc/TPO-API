@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -159,8 +160,10 @@ public class CheckoutServiceImpl implements CheckoutService {
             productoRepository.save(producto);
         }
 
-        // Actualizar el total de la orden con descuentos aplicados
+        // Actualizar el total de la orden con descuentos aplicados y cambiar estado a
+        // COMPLETADA
         orden.setTotal(totalConDescuentos);
+        orden.setEstado("COMPLETADA");
         orden = ordenRepository.save(orden);
 
         // Recargar orden con items
@@ -177,11 +180,31 @@ public class CheckoutServiceImpl implements CheckoutService {
      */
     private double calcularDescuentoAplicable(Long productoId, double precioUnitario) {
         try {
-            // Intentar obtener el descuento activo para el producto
-            DescuentoProductoDTO descuento = descuentoProductoService.obtenerPorProducto(productoId);
+            // Intentar obtener el descuento activo para el producto usando el método que no lanza excepción
+            Optional<DescuentoProductoDTO> descuentoOpt = descuentoProductoService.obtenerPorProductoOptional(productoId);
+
+            // Si no hay descuento, retornar 0
+            if (descuentoOpt.isEmpty()) {
+                System.out.println("DEBUG: No hay descuento para producto ID " + productoId);
+                return 0.0;
+            }
+
+            DescuentoProductoDTO descuento = descuentoOpt.get();
+
+            // Verificar si el descuento existe y no es null
+            if (descuento == null) {
+                return 0.0;
+            }
 
             // Verificar si el descuento está activo
-            if (!Boolean.TRUE.equals(descuento.getActivo())) {
+            if (descuento.getActivo() == null || !descuento.getActivo()) {
+                System.out.println("DEBUG: Descuento inactivo para producto ID " + productoId);
+                return 0.0;
+            }
+
+            // Verificar que el porcentaje de descuento no sea null y sea válido
+            if (descuento.getPorcentajeDescuento() == null || descuento.getPorcentajeDescuento() <= 0) {
+                System.out.println("DEBUG: Porcentaje de descuento inválido para producto ID " + productoId + ": " + descuento.getPorcentajeDescuento());
                 return 0.0;
             }
 
@@ -189,6 +212,7 @@ public class CheckoutServiceImpl implements CheckoutService {
             Date ahora = new Date();
             if (descuento.getFechaInicio() != null && descuento.getFechaFin() != null) {
                 if (ahora.before(descuento.getFechaInicio()) || ahora.after(descuento.getFechaFin())) {
+                    System.out.println("DEBUG: Descuento fuera del rango de fechas para producto ID " + productoId);
                     return 0.0;
                 }
             }
@@ -197,10 +221,13 @@ public class CheckoutServiceImpl implements CheckoutService {
             double porcentaje = descuento.getPorcentajeDescuento();
             double montoDescuento = precioUnitario * (porcentaje / 100.0);
 
+            System.out.println("DEBUG: Descuento aplicado a producto ID " + productoId + ": " + montoDescuento + " (" + porcentaje + "%)");
             return montoDescuento;
 
-        } catch (RecursoNoEncontrado e) {
-            // No hay descuento para este producto
+        } catch (Exception e) {
+            // Log de cualquier otro error para debugging
+            System.out.println("DEBUG: Error inesperado calculando descuento para producto " + productoId + ": " + e.getMessage());
+            e.printStackTrace();
             return 0.0;
         }
     }

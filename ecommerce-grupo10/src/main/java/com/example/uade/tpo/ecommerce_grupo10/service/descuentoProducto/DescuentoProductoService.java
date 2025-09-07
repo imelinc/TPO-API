@@ -1,5 +1,7 @@
 package com.example.uade.tpo.ecommerce_grupo10.service.descuentoProducto;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -12,6 +14,9 @@ public interface DescuentoProductoService {
     DescuentoProductoDTO obtenerPorId(Long id);
 
     DescuentoProductoDTO obtenerPorProducto(Long productoId);
+
+    // Nuevo método que no lanza excepción
+    Optional<DescuentoProductoDTO> obtenerPorProductoOptional(Long productoId);
 
     Page<DescuentoProductoDTO> listar(Pageable pageable);
 
