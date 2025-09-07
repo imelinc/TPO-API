@@ -180,8 +180,10 @@ public class CheckoutServiceImpl implements CheckoutService {
      */
     private double calcularDescuentoAplicable(Long productoId, double precioUnitario) {
         try {
-            // Intentar obtener el descuento activo para el producto usando el método que no lanza excepción
-            Optional<DescuentoProductoDTO> descuentoOpt = descuentoProductoService.obtenerPorProductoOptional(productoId);
+            // Intentar obtener el descuento activo para el producto usando el método que no
+            // lanza excepción
+            Optional<DescuentoProductoDTO> descuentoOpt = descuentoProductoService
+                    .obtenerPorProductoOptional(productoId);
 
             // Si no hay descuento, retornar 0
             if (descuentoOpt.isEmpty()) {
@@ -204,7 +206,8 @@ public class CheckoutServiceImpl implements CheckoutService {
 
             // Verificar que el porcentaje de descuento no sea null y sea válido
             if (descuento.getPorcentajeDescuento() == null || descuento.getPorcentajeDescuento() <= 0) {
-                System.out.println("DEBUG: Porcentaje de descuento inválido para producto ID " + productoId + ": " + descuento.getPorcentajeDescuento());
+                System.out.println("DEBUG: Porcentaje de descuento inválido para producto ID " + productoId + ": "
+                        + descuento.getPorcentajeDescuento());
                 return 0.0;
             }
 
@@ -221,12 +224,14 @@ public class CheckoutServiceImpl implements CheckoutService {
             double porcentaje = descuento.getPorcentajeDescuento();
             double montoDescuento = precioUnitario * (porcentaje / 100.0);
 
-            System.out.println("DEBUG: Descuento aplicado a producto ID " + productoId + ": " + montoDescuento + " (" + porcentaje + "%)");
+            System.out.println("DEBUG: Descuento aplicado a producto ID " + productoId + ": " + montoDescuento + " ("
+                    + porcentaje + "%)");
             return montoDescuento;
 
         } catch (Exception e) {
             // Log de cualquier otro error para debugging
-            System.out.println("DEBUG: Error inesperado calculando descuento para producto " + productoId + ": " + e.getMessage());
+            System.out.println(
+                    "DEBUG: Error inesperado calculando descuento para producto " + productoId + ": " + e.getMessage());
             e.printStackTrace();
             return 0.0;
         }

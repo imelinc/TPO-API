@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 import com.example.uade.tpo.ecommerce_grupo10.entity.__dto__.DescuentoProductoDTO;
 
 public interface DescuentoProductoService {
-    
+
     DescuentoProductoDTO crear(Long productoId, DescuentoProductoDTO dto);
 
     DescuentoProductoDTO obtenerPorId(Long id);

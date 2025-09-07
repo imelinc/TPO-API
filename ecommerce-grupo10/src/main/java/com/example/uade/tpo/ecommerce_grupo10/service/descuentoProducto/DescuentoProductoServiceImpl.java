@@ -34,7 +34,7 @@ public class DescuentoProductoServiceImpl implements DescuentoProductoService {
                 .orElseThrow(() -> new RecursoNoEncontrado("Producto no encontrado id=" + productoId));
 
         validarDTO(dto); // validamos la entidad del descuento para ver si es valido
-    
+
         DescuentoProducto entity = descuentoProductoRepository.findByProductoId(productoId)
                 .orElse(mapperDescuentoProducto.toEntity(dto, producto));
 

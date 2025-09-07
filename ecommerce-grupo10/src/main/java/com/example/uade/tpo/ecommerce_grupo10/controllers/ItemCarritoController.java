@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/items-carrito")
+@CrossOrigin(origins = "*", methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.DELETE, RequestMethod.PUT,
+        RequestMethod.PATCH })
 public class ItemCarritoController {
 
     private final ItemCarritoService itemCarritoService;

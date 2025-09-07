@@ -8,6 +8,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 
 import com.example.uade.tpo.ecommerce_grupo10.controllers.auth.JwtAuthFilter;
 
@@ -17,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -27,17 +32,21 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(req -> req
                         // Endpoints públicos
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/productos-publicos/**").permitAll()
 
-                        // Endpoints solo para COMPRADORES
+                        // Endpoints específicos para COMPRADORES (deben ir ANTES que /usuarios/**)
+                        .requestMatchers("/usuarios/*/wishlist/**").hasRole("COMPRADOR")
+                        .requestMatchers("/usuarios/*/carrito/**").hasRole("COMPRADOR")
+
+                        // Otros endpoints para COMPRADORES
                         .requestMatchers("/carritos/**").hasRole("COMPRADOR")
                         .requestMatchers("/checkout/**").hasRole("COMPRADOR")
                         .requestMatchers("/wishlists/**").hasRole("COMPRADOR")
-                        .requestMatchers("/usuarios/*/wishlist/**").hasRole("COMPRADOR")
-                        .requestMatchers("/usuarios/*/carrito/**").hasRole("COMPRADOR")
+                        .requestMatchers("/items-carrito/**").hasRole("COMPRADOR")
 
                         // Endpoints solo para VENDEDORES
                         .requestMatchers("/productos/**").hasAnyRole("VENDEDOR", "ADMIN")
@@ -45,12 +54,12 @@ public class SecurityConfig {
                         .requestMatchers("/descuentos/**").hasAnyRole("VENDEDOR", "ADMIN")
                         .requestMatchers("/imagenes/**").hasAnyRole("VENDEDOR", "ADMIN")
 
-                        // Endpoints solo para ADMIN
-                        .requestMatchers("/usuarios/**").hasRole("ADMIN")
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-
                         // Endpoints compartidos (ambos roles pueden ver órdenes)
                         .requestMatchers("/ordenes/**").authenticated()
+
+                        // Endpoints solo para ADMIN (debe ir DESPUÉS de los específicos)
+                        .requestMatchers("/usuarios/**").hasRole("ADMIN")
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
 
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
@@ -58,6 +67,19 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedOriginPattern("*"); // Permite todos los orígenes para desarrollo
+        configuration.addAllowedMethod("*"); // Permite todos los métodos HTTP (GET, POST, PUT, DELETE, etc.)
+        configuration.addAllowedHeader("*"); // Permite todos los headers
+        configuration.setAllowCredentials(true); // Permite envío de credenciales
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
 }

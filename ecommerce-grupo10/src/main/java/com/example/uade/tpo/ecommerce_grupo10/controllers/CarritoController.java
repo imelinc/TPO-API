@@ -13,11 +13,13 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/carritos")
+@CrossOrigin(origins = "*", methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.DELETE, RequestMethod.PUT,
+        RequestMethod.PATCH })
 public class CarritoController {
 
     private final CarritoService carritoService;
 
-     // crear carrito si no existe y devolverlo
+    // crear carrito si no existe y devolverlo
     @PostMapping("/usuario/{usuarioId}") // asociado a un usuario obviamente
     public ResponseEntity<CarritoDTO> crearSiNoExiste(@PathVariable Long usuarioId) {
         return ResponseEntity.ok(carritoService.crearSiNoExiste(usuarioId));
@@ -35,8 +37,7 @@ public class CarritoController {
             @PathVariable Long usuarioId,
             @RequestBody AddItemRequest body) { // aca usamos la request que creamos
         return ResponseEntity.ok(
-                carritoService.agregarItem(usuarioId, body.getProductoId(), body.getCantidad())
-        );
+                carritoService.agregarItem(usuarioId, body.getProductoId(), body.getCantidad()));
     }
 
     // Actualizar cantidad
@@ -46,8 +47,7 @@ public class CarritoController {
             @PathVariable Long productoId,
             @RequestBody UpdateCantidadRequest body) { // aca usamos la otra request que creamos
         return ResponseEntity.ok(
-                carritoService.actualizarCantidad(usuarioId, productoId, body.getCantidad())
-        );
+                carritoService.actualizarCantidad(usuarioId, productoId, body.getCantidad()));
     }
 
     // Eliminar item
@@ -56,8 +56,7 @@ public class CarritoController {
             @PathVariable Long usuarioId,
             @PathVariable Long productoId) {
         return ResponseEntity.ok(
-                carritoService.eliminarItem(usuarioId, productoId)
-        );
+                carritoService.eliminarItem(usuarioId, productoId));
     }
 
     // Vaciar carrito
