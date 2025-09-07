@@ -1,5 +1,8 @@
 package com.example.uade.tpo.ecommerce_grupo10.entity.__dto__;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,4 +30,7 @@ public class ProductoDTO {
     private Double precioConDescuento;
     private Double montoDescuento;
 
+    // Lista de imágenes del producto
+    @Builder.Default
+    private List<ImagenProductoDTO> imagenes = new ArrayList<>();
 }

@@ -1,7 +1,9 @@
 package com.example.uade.tpo.ecommerce_grupo10.entity.__mappers__;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -10,6 +12,7 @@ import com.example.uade.tpo.ecommerce_grupo10.entity.Categoria;
 import com.example.uade.tpo.ecommerce_grupo10.entity.Producto;
 import com.example.uade.tpo.ecommerce_grupo10.entity.Usuario;
 import com.example.uade.tpo.ecommerce_grupo10.entity.__dto__.ProductoDTO;
+import com.example.uade.tpo.ecommerce_grupo10.entity.__dto__.ImagenProductoDTO;
 import com.example.uade.tpo.ecommerce_grupo10.entity.__dto__.DescuentoProductoDTO;
 import com.example.uade.tpo.ecommerce_grupo10.service.descuentoProducto.DescuentoProductoService;
 
@@ -19,10 +22,19 @@ public class MapperProducto {
     @Autowired
     private DescuentoProductoService descuentoProductoService;
 
+    @Autowired
+    private MapperImagenProducto mapperImagenProducto;
+
     // metodo que convierte un Producto a ProductoDTO (sin descuentos)
     public ProductoDTO toDTO(Producto p) {
         if (p == null)
             return null;
+
+        // Convertir las imágenes a DTOs
+        List<ImagenProductoDTO> imagenesDTO = p.getImagenes() != null ? p.getImagenes().stream()
+                .map(mapperImagenProducto::toDTO)
+                .collect(Collectors.toList()) : List.of();
+
         return ProductoDTO.builder()
                 .id(p.getId())
                 .titulo(p.getTitulo())
@@ -34,6 +46,7 @@ public class MapperProducto {
                 .categoriaNombre(p.getCategoria() != null ? p.getCategoria().getNombre() : null)
                 .vendedorId(p.getVendedor() != null ? p.getVendedor().getId() : null)
                 .vendedorNombre(p.getVendedor() != null ? p.getVendedor().getNombre() : null)
+                .imagenes(imagenesDTO)
                 .tieneDescuento(false)
                 .build();
     }

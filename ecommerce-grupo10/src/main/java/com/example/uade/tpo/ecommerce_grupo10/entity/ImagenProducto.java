@@ -13,19 +13,28 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name="imagenes_productos")
+@Table(name = "imagenes_productos")
 @Getter // genera los getters
 @Setter // genera los setters
 @NoArgsConstructor // genera el constructor por defecto
 @AllArgsConstructor // genera el constructor con todos los parametros
 public class ImagenProducto {
-    
+
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable=false, length=300)
+    @Column(nullable = false, length = 300)
     private String url; // URL de la imagen del producto
+
+    @Column(name = "descripcion")
+    private String descripcion;
+
+    @Column(name = "es_principal")
+    private Boolean esPrincipal = false;
+
+    @Column(name = "orden_visualizacion")
+    private Integer ordenVisualizacion = 0;
 
     @ManyToOne
     private Producto producto; // Relacion con la entidad Producto
