@@ -14,17 +14,18 @@ import com.example.uade.tpo.ecommerce_grupo10.exceptions.RecursoNoEncontrado;
 import com.example.uade.tpo.ecommerce_grupo10.repository.ImagenProductoRepository;
 import com.example.uade.tpo.ecommerce_grupo10.repository.ProductoRepository;
 
-
 import lombok.RequiredArgsConstructor;
 
-@Service @RequiredArgsConstructor
+@Service
+@RequiredArgsConstructor
 public class ImagenProductoServiceImpl implements ImagenProductoService {
-    
+
     private final ImagenProductoRepository imagenRepository;
     private final ProductoRepository productoRepository;
     private final MapperImagenProducto mapperImagenProducto;
 
-    @Override @Transactional
+    @Override
+    @Transactional
     public ImagenProductoDTO agregarImagen(Long productoId, String url) {
         if (url == null || url.isBlank()) {
             throw new IllegalArgumentException("La URL de la imagen es obligatoria");
@@ -65,7 +66,8 @@ public class ImagenProductoServiceImpl implements ImagenProductoService {
         return mapperImagenProducto.toDTO(img);
     }
 
-    @Override @Transactional
+    @Override
+    @Transactional
     public ImagenProductoDTO actualizarUrl(Long productoId, Long imagenId, String nuevaUrl) {
         if (nuevaUrl == null || nuevaUrl.isBlank()) {
             throw new IllegalArgumentException("La nueva URL no puede estar vacía");
@@ -80,21 +82,23 @@ public class ImagenProductoServiceImpl implements ImagenProductoService {
             throw new IllegalArgumentException("Otra imagen ya usa esa URL para este producto");
         }
 
-        img.setUrl(nuevaUrl); 
+        img.setUrl(nuevaUrl);
         return mapperImagenProducto.toDTO(img);
     }
 
-    @Override @Transactional
+    @Override
+    @Transactional
     public void eliminarImagen(Long productoId, Long imagenId) {
         ImagenProducto img = imagenRepository.findByIdAndProductoId(imagenId, productoId)
                 .orElseThrow(() -> new RecursoNoEncontrado("Imagen no encontrada para este producto"));
-        
+
         boolean eraPrincipal = img.getEsPrincipal() != null && img.getEsPrincipal();
         imagenRepository.delete(img);
-        
+
         // Si era la imagen principal, establecer otra como principal
         if (eraPrincipal) {
-            List<ImagenProducto> imagenesRestantes = imagenRepository.findByProductoIdOrderByOrdenVisualizacionAsc(productoId);
+            List<ImagenProducto> imagenesRestantes = imagenRepository
+                    .findByProductoIdOrderByOrdenVisualizacionAsc(productoId);
             if (!imagenesRestantes.isEmpty()) {
                 ImagenProducto nuevaPrincipal = imagenesRestantes.get(0);
                 nuevaPrincipal.setEsPrincipal(true);
@@ -104,32 +108,34 @@ public class ImagenProductoServiceImpl implements ImagenProductoService {
     }
 
     // Nuevos métodos implementados
-    @Override @Transactional
+    @Override
+    @Transactional
     public ImagenProductoDTO crearImagen(Long productoId, ImagenProductoDTO imagenDTO) {
         Producto producto = productoRepository.findById(productoId)
                 .orElseThrow(() -> new RecursoNoEncontrado("Producto no encontrado"));
-        
+
         ImagenProducto imagen = mapperImagenProducto.toEntity(imagenDTO);
         imagen.setProducto(producto);
-        
+
         // Si es la primera imagen del producto, marcarla como principal
         if (imagenRepository.countByProductoId(productoId) == 0) {
             imagen.setEsPrincipal(true);
         }
-        
+
         ImagenProducto imagenGuardada = imagenRepository.save(imagen);
         return mapperImagenProducto.toDTO(imagenGuardada);
     }
 
-    @Override @Transactional
+    @Override
+    @Transactional
     public ImagenProductoDTO actualizarImagen(Long imagenId, ImagenProductoDTO imagenDTO) {
         ImagenProducto imagen = imagenRepository.findById(imagenId)
                 .orElseThrow(() -> new RecursoNoEncontrado("Imagen no encontrada"));
-        
+
         imagen.setUrl(imagenDTO.getUrl());
         imagen.setDescripcion(imagenDTO.getDescripcion());
         imagen.setOrdenVisualizacion(imagenDTO.getOrdenVisualizacion());
-        
+
         ImagenProducto imagenActualizada = imagenRepository.save(imagen);
         return mapperImagenProducto.toDTO(imagenActualizada);
     }
@@ -140,15 +146,17 @@ public class ImagenProductoServiceImpl implements ImagenProductoService {
                 .map(mapperImagenProducto::toDTO);
     }
 
-    @Override @Transactional
+    @Override
+    @Transactional
     public void establecerImagenPrincipal(Long productoId, Long imagenId) {
         // Desactivar todas las imágenes principales del producto
-        List<ImagenProducto> todasLasImagenes = imagenRepository.findByProductoIdOrderByOrdenVisualizacionAsc(productoId);
+        List<ImagenProducto> todasLasImagenes = imagenRepository
+                .findByProductoIdOrderByOrdenVisualizacionAsc(productoId);
         for (ImagenProducto img : todasLasImagenes) {
             img.setEsPrincipal(false);
         }
         imagenRepository.saveAll(todasLasImagenes);
-        
+
         // Activar la imagen seleccionada como principal
         ImagenProducto imagenPrincipal = imagenRepository.findById(imagenId)
                 .orElseThrow(() -> new RecursoNoEncontrado("Imagen no encontrada"));

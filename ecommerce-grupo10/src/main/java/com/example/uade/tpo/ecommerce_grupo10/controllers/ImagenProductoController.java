@@ -26,7 +26,8 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@RestController @RequiredArgsConstructor
+@RestController
+@RequiredArgsConstructor
 @RequestMapping("/productos/{productoId}/imagenes")
 public class ImagenProductoController {
 
@@ -39,11 +40,11 @@ public class ImagenProductoController {
     public ResponseEntity<ImagenProductoDTO> crearSimple(
             @PathVariable Long productoId,
             @RequestBody UrlRequest body) {
-        
+
         if (!puedeGestionarProducto(productoId)) {
             return ResponseEntity.status(403).build();
         }
-        
+
         ImagenProductoDTO dto = imagenProductoService.agregarImagen(productoId, body.getUrl());
         return ResponseEntity.ok(dto);
     }
@@ -53,15 +54,15 @@ public class ImagenProductoController {
     public ResponseEntity<ImagenProductoDTO> crear(
             @PathVariable Long productoId,
             @RequestBody ImagenProductoDTO imagenDTO) {
-        
+
         if (!puedeGestionarProducto(productoId)) {
             return ResponseEntity.status(403).build();
         }
-        
+
         ImagenProductoDTO dto = imagenProductoService.crearImagen(productoId, imagenDTO);
         return ResponseEntity.ok(dto);
     }
-    
+
     // listar imagenes
     @GetMapping
     public ResponseEntity<List<ImagenProductoDTO>> listar(@PathVariable Long productoId) {
@@ -90,11 +91,11 @@ public class ImagenProductoController {
             @PathVariable Long productoId,
             @PathVariable Long imagenId,
             @RequestBody UrlRequest body) {
-        
+
         if (!puedeGestionarProducto(productoId)) {
             return ResponseEntity.status(403).build();
         }
-        
+
         ImagenProductoDTO dto = imagenProductoService.actualizarUrl(productoId, imagenId, body.getUrl());
         return ResponseEntity.ok(dto);
     }
@@ -105,11 +106,11 @@ public class ImagenProductoController {
             @PathVariable Long productoId,
             @PathVariable Long imagenId,
             @RequestBody ImagenProductoDTO imagenDTO) {
-        
+
         if (!puedeGestionarProducto(productoId)) {
             return ResponseEntity.status(403).build();
         }
-        
+
         ImagenProductoDTO dto = imagenProductoService.actualizarImagen(imagenId, imagenDTO);
         return ResponseEntity.ok(dto);
     }
@@ -119,11 +120,11 @@ public class ImagenProductoController {
     public ResponseEntity<Void> establecerPrincipal(
             @PathVariable Long productoId,
             @PathVariable Long imagenId) {
-        
+
         if (!puedeGestionarProducto(productoId)) {
             return ResponseEntity.status(403).build();
         }
-        
+
         imagenProductoService.establecerImagenPrincipal(productoId, imagenId);
         return ResponseEntity.ok().build();
     }
@@ -133,11 +134,11 @@ public class ImagenProductoController {
     public ResponseEntity<Void> eliminar(
             @PathVariable Long productoId,
             @PathVariable Long imagenId) {
-        
+
         if (!puedeGestionarProducto(productoId)) {
             return ResponseEntity.status(403).build();
         }
-        
+
         imagenProductoService.eliminarImagen(productoId, imagenId);
         return ResponseEntity.noContent().build();
     }
@@ -145,11 +146,11 @@ public class ImagenProductoController {
     // Método auxiliar para validar permisos
     private boolean puedeGestionarProducto(Long productoId) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        
+
         // ADMIN puede gestionar cualquier producto
         boolean esAdmin = auth.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
-        
+
         if (esAdmin) {
             return true;
         }
@@ -165,7 +166,7 @@ public class ImagenProductoController {
         // Verificar que el producto pertenezca al vendedor
         String emailUsuario = auth.getName();
         Optional<UsuarioDTO> usuarioOpt = usuarioService.buscarPorEmail(emailUsuario);
-        
+
         if (usuarioOpt.isEmpty()) {
             return false;
         }

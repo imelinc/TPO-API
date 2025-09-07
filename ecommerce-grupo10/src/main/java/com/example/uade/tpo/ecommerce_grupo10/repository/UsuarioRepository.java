@@ -46,4 +46,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
             """)
     Page<Usuario> search(@Param("parametroBusqueda") String parametroBusqueda, Pageable pageable);
 
+    // Verificar si existe un usuario con un rol específico
+    boolean existsByRol(Rol rol);
+
 }

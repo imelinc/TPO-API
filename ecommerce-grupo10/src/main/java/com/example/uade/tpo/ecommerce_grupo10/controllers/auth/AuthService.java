@@ -37,6 +37,12 @@ public class AuthService {
             throw new IllegalArgumentException("El email ya está en uso");
         }
 
+        // Validar que no se pueda registrar con rol ADMIN
+        if (req.getRol() != null && req.getRol() == Rol.ADMIN) {
+            throw new IllegalArgumentException(
+                    "No se puede registrar un usuario con rol ADMIN. Los administradores son creados por el sistema.");
+        }
+
         Usuario u = new Usuario();
         u.setUsername(req.getUsername());
         u.setEmail(req.getEmail());
@@ -46,7 +52,7 @@ public class AuthService {
         u.setTelefono(req.getTelefono());
         u.setDireccion(req.getDireccion());
 
-        // Si no viene rol, default COMPRADOR
+        // Si no viene rol, default COMPRADOR (y nunca puede ser ADMIN)
         u.setRol(req.getRol() == null ? Rol.COMPRADOR : req.getRol());
         Usuario saved = usuarioRepository.save(u);
 
