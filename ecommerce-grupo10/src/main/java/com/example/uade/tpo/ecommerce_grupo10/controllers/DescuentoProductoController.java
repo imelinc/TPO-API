@@ -34,7 +34,7 @@ public class DescuentoProductoController {
         return ResponseEntity.ok(service.obtenerPorProducto(productoId));
     }
 
-    @PutMapping("/productos/{productoId}/descuento/{id}")
+    @PatchMapping("/productos/{productoId}/descuento/{id}")
     public ResponseEntity<DescuentoProductoDTO> actualizar(
             @PathVariable Long productoId,
             @PathVariable Long id,
