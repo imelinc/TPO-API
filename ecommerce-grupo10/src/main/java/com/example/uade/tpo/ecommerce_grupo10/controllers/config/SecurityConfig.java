@@ -38,8 +38,6 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/productos-publicos/**").permitAll()
 
-                        // 🌟 ADMIN PUEDE HACER TODO - está incluido en TODAS las reglas 🌟
-                        
                         // Endpoints para COMPRADORES (+ ADMIN que puede hacer todo)
                         .requestMatchers("/usuarios/*/wishlist/**").hasAnyRole("COMPRADOR", "ADMIN")
                         .requestMatchers("/usuarios/*/carrito/**").hasAnyRole("COMPRADOR", "ADMIN")
