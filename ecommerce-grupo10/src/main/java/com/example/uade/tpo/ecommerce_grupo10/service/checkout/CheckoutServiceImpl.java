@@ -2,6 +2,7 @@ package com.example.uade.tpo.ecommerce_grupo10.service.checkout;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import com.example.uade.tpo.ecommerce_grupo10.entity.Usuario;
 import com.example.uade.tpo.ecommerce_grupo10.entity.__dto__.CarritoDTO;
 import com.example.uade.tpo.ecommerce_grupo10.entity.__dto__.ItemCarritoDTO;
 import com.example.uade.tpo.ecommerce_grupo10.entity.__dto__.OrdenDTO;
+import com.example.uade.tpo.ecommerce_grupo10.entity.__dto__.DescuentoProductoDTO;
 import com.example.uade.tpo.ecommerce_grupo10.entity.__mappers__.MapperOrden;
 import com.example.uade.tpo.ecommerce_grupo10.exceptions.RecursoNoEncontrado;
 import com.example.uade.tpo.ecommerce_grupo10.repository.ItemOrdenRepository;
@@ -21,6 +23,7 @@ import com.example.uade.tpo.ecommerce_grupo10.repository.OrdenRepository;
 import com.example.uade.tpo.ecommerce_grupo10.repository.ProductoRepository;
 import com.example.uade.tpo.ecommerce_grupo10.repository.UsuarioRepository;
 import com.example.uade.tpo.ecommerce_grupo10.service.carrito.CarritoService;
+import com.example.uade.tpo.ecommerce_grupo10.service.descuentoProducto.DescuentoProductoService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -35,6 +38,7 @@ public class CheckoutServiceImpl implements CheckoutService {
     private final UsuarioRepository usuarioRepository;
     private final ProductoRepository productoRepository;
     private final MapperOrden mapperOrden;
+    private final DescuentoProductoService descuentoProductoService;
 
     @Override
     public OrdenDTO realizarCheckout(Long usuarioId) {
@@ -120,15 +124,20 @@ public class CheckoutServiceImpl implements CheckoutService {
         orden.setUsuario(usuario);
         orden.setFechaCreacion(LocalDateTime.now());
         orden.setEstado("PENDIENTE");
-        orden.setTotal(carrito.getTotal());
 
-        // Guardar orden primero para obtener ID
+        // Guardar orden primero para obtener ID (sin total aún)
         orden = ordenRepository.save(orden);
+
+        // Variable para calcular el total real con descuentos
+        double totalConDescuentos = 0.0;
 
         // Crear items de orden
         for (ItemCarritoDTO itemCarrito : carrito.getItems()) {
             Producto producto = productoRepository.findById(itemCarrito.getProductoId())
                     .orElseThrow(() -> new RecursoNoEncontrado("Producto no encontrado"));
+
+            // Calcular descuento aplicable
+            double descuentoAplicado = calcularDescuentoAplicable(producto.getId(), itemCarrito.getPrecioUnitario());
 
             ItemOrden itemOrden = new ItemOrden();
             itemOrden.setOrden(orden);
@@ -136,17 +145,63 @@ public class CheckoutServiceImpl implements CheckoutService {
             itemOrden.setTitulo(producto.getTitulo());
             itemOrden.setCantidad(itemCarrito.getCantidad());
             itemOrden.setPrecioUnitario(itemCarrito.getPrecioUnitario());
-            itemOrden.setDescuentoAplicado(0.0); // Por ahora sin descuentos
+            itemOrden.setDescuentoAplicado(descuentoAplicado);
 
             itemOrdenRepository.save(itemOrden);
+
+            // Calcular subtotal con descuento: (precio - descuento) * cantidad
+            double subtotalConDescuento = (itemCarrito.getPrecioUnitario() - descuentoAplicado)
+                    * itemCarrito.getCantidad();
+            totalConDescuentos += subtotalConDescuento;
 
             // Actualizar stock del producto
             producto.setStock(producto.getStock() - itemCarrito.getCantidad());
             productoRepository.save(producto);
         }
 
+        // Actualizar el total de la orden con descuentos aplicados
+        orden.setTotal(totalConDescuentos);
+        orden = ordenRepository.save(orden);
+
         // Recargar orden con items
         return ordenRepository.findById(orden.getId())
                 .orElseThrow(() -> new RecursoNoEncontrado("Error al crear orden"));
+    }
+
+    /**
+     * Calcula el descuento aplicable para un producto en una fecha específica
+     * 
+     * @param productoId     ID del producto
+     * @param precioUnitario Precio unitario del producto
+     * @return Monto del descuento aplicable
+     */
+    private double calcularDescuentoAplicable(Long productoId, double precioUnitario) {
+        try {
+            // Intentar obtener el descuento activo para el producto
+            DescuentoProductoDTO descuento = descuentoProductoService.obtenerPorProducto(productoId);
+
+            // Verificar si el descuento está activo
+            if (!Boolean.TRUE.equals(descuento.getActivo())) {
+                return 0.0;
+            }
+
+            // Verificar si el descuento está dentro del rango de fechas
+            Date ahora = new Date();
+            if (descuento.getFechaInicio() != null && descuento.getFechaFin() != null) {
+                if (ahora.before(descuento.getFechaInicio()) || ahora.after(descuento.getFechaFin())) {
+                    return 0.0;
+                }
+            }
+
+            // Calcular el monto del descuento
+            double porcentaje = descuento.getPorcentajeDescuento();
+            double montoDescuento = precioUnitario * (porcentaje / 100.0);
+
+            return montoDescuento;
+
+        } catch (RecursoNoEncontrado e) {
+            // No hay descuento para este producto
+            return 0.0;
+        }
     }
 }

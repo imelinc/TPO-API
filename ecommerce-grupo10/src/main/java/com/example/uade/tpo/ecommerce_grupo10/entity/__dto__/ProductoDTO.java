@@ -21,4 +21,10 @@ public class ProductoDTO {
     private Long vendedorId;
     private String vendedorNombre;
 
+    // Campos para descuentos
+    private Boolean tieneDescuento;
+    private Double porcentajeDescuento;
+    private Double precioConDescuento;
+    private Double montoDescuento;
+
 }

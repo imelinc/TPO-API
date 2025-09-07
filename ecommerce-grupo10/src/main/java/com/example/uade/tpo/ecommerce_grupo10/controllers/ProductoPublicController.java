@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.uade.tpo.ecommerce_grupo10.entity.Producto;
 import com.example.uade.tpo.ecommerce_grupo10.entity.__dto__.ProductoDTO;
+import com.example.uade.tpo.ecommerce_grupo10.entity.__mappers__.MapperProducto;
 import com.example.uade.tpo.ecommerce_grupo10.service.producto.ProductoService;
 
 import lombok.RequiredArgsConstructor;
@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 public class ProductoPublicController {
 
     private final ProductoService productoService;
+    private final MapperProducto mapperProducto;
 
     /**
      * Endpoints publicos para que los COMPRADORES puedan ver productos
@@ -29,34 +30,37 @@ public class ProductoPublicController {
      */
 
     @GetMapping
-    public ResponseEntity<Page<Producto>> listarProductos(
+    public ResponseEntity<Page<ProductoDTO>> listarProductos(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return ResponseEntity.ok(productoService.listarDisponibles(pageable));
+        return ResponseEntity.ok(productoService.listarDisponibles(pageable)
+                .map(mapperProducto::toDTOConDescuentos));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Producto> obtenerProducto(@PathVariable Long id) {
-        return ResponseEntity.ok(productoService.get(id));
+    public ResponseEntity<ProductoDTO> obtenerProducto(@PathVariable Long id) {
+        return ResponseEntity.ok(mapperProducto.toDTOConDescuentos(productoService.get(id)));
     }
 
     @GetMapping("/categoria/{categoriaId}")
-    public ResponseEntity<Page<Producto>> productosPorCategoria(
+    public ResponseEntity<Page<ProductoDTO>> productosPorCategoria(
             @PathVariable Long categoriaId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return ResponseEntity.ok(productoService.buscarPorCategoria(categoriaId, pageable));
+        return ResponseEntity.ok(productoService.buscarPorCategoria(categoriaId, pageable)
+                .map(mapperProducto::toDTOConDescuentos));
     }
 
     @GetMapping("/buscar")
-    public ResponseEntity<Page<Producto>> buscarProductos(
+    public ResponseEntity<Page<ProductoDTO>> buscarProductos(
             @RequestParam String titulo,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return ResponseEntity.ok(productoService.buscarPorTitulo(titulo, pageable));
+        return ResponseEntity.ok(productoService.buscarPorTitulo(titulo, pageable)
+                .map(mapperProducto::toDTOConDescuentos));
     }
 
     @GetMapping("/precio")
