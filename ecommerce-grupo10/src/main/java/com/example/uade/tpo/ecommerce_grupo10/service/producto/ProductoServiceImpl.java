@@ -88,7 +88,7 @@ public class ProductoServiceImpl implements ProductoService {
     @Override
     public Page<ProductoDTO> buscarPorPrecio(Double min, Double max, Pageable pageable) {
         return productoRepository.findByPrecioBetweenAndStockGreaterThan(min, max, 0, pageable)
-                .map(mapperProducto::toDTO);
+                .map(mapperProducto::toDTOConDescuentos);
     }
 
     // MÉTODOS PARA VENDEDORES
@@ -117,7 +117,7 @@ public class ProductoServiceImpl implements ProductoService {
     public Page<ProductoDTO> buscarPorPrecioPorVendedor(Long vendedorId, Double precioMin, Double precioMax,
             Pageable pageable) {
         return productoRepository.findByVendedorIdAndPrecioBetween(vendedorId, precioMin, precioMax, pageable)
-                .map(mapperProducto::toDTO);
+                .map(mapperProducto::toDTOConDescuentos);
     }
 
 }

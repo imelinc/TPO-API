@@ -70,7 +70,7 @@ public class ProductoController {
         }
 
         return result.getContent().stream()
-                .map(mapperProducto::toDTO)
+                .map(mapperProducto::toDTOConDescuentos)
                 .toList();
     }
 
@@ -106,18 +106,17 @@ public class ProductoController {
         }
 
         return result.getContent().stream()
-                .map(mapperProducto::toDTO)
+                .map(mapperProducto::toDTOConDescuentos)
                 .toList();
     }
 
-    // Obtener detalle por id
+    // Obtener un producto por ID
     @GetMapping("/{id}")
-    public ResponseEntity<ProductoDTO> getProductoById(@PathVariable Long id) {
-        Producto p = productoService.get(id); // lanza 404 si no existe
-        return ResponseEntity.ok(mapperProducto.toDTO(p));
-    }
+    public ResponseEntity<ProductoDTO> obtenerProducto(@PathVariable Long id) {
+        Producto p = productoService.get(id);
+        return ResponseEntity.ok(mapperProducto.toDTOConDescuentos(p));
+    } // Filtrar por categoria - ADMIN ve todos, VENDEDOR ve solo los suyos
 
-    // Filtrar por categoria - ADMIN ve todos, VENDEDOR ve solo los suyos
     @GetMapping("/categoria/{id}")
     public List<ProductoDTO> porCategoria(
             @PathVariable Long id,
@@ -149,7 +148,7 @@ public class ProductoController {
         }
 
         return result.getContent().stream()
-                .map(mapperProducto::toDTO)
+                .map(mapperProducto::toDTOConDescuentos)
                 .toList();
     }
 
@@ -157,7 +156,7 @@ public class ProductoController {
     @PostMapping
     public ResponseEntity<ProductoDTO> crearProducto(@RequestBody ProductoDTO dto) {
         var creado = productoService.save(dto);
-        return ResponseEntity.ok(mapperProducto.toDTO(creado));
+        return ResponseEntity.ok(mapperProducto.toDTOConDescuentos(creado));
     }
 
     /// Actualizar - Solo VENDEDORES pueden editar sus propios productos, ADMIN
@@ -201,7 +200,7 @@ public class ProductoController {
         // Si es ADMIN o es VENDEDOR y el producto le pertenece, proceder con la
         // actualización
         var actualizado = productoService.update(id, dto);
-        return ResponseEntity.ok(mapperProducto.toDTO(actualizado));
+        return ResponseEntity.ok(mapperProducto.toDTOConDescuentos(actualizado));
     }
 
     // Eliminar - Solo VENDEDORES pueden eliminar sus propios productos, ADMIN puede
