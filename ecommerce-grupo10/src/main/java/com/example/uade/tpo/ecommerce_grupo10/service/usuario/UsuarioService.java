@@ -27,8 +27,6 @@ public interface UsuarioService {
 
     UsuarioDTO actualizar(Long id, UsuarioUpdateDTO dto);
 
-    void eliminar(Long id);
-
     boolean existePorUsername(String username);
 
     boolean existePorEmail(String email);

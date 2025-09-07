@@ -6,9 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,17 +30,6 @@ import lombok.RequiredArgsConstructor;
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
-
-    // Debug endpoint para verificar autenticación
-    @GetMapping("/debug-auth")
-    public ResponseEntity<String> debugAuth() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String debugInfo = "Usuario: " + (auth != null ? auth.getName() : "null") +
-                ", Authorities: " + (auth != null ? auth.getAuthorities() : "null") +
-                ", Principal: " + (auth != null ? auth.getPrincipal() : "null");
-        System.out.println("DEBUG AUTH USUARIO: " + debugInfo);
-        return ResponseEntity.ok(debugInfo);
-    }
 
     // Listar todos los usuarios con paginacion
     @GetMapping
@@ -128,19 +114,5 @@ public class UsuarioController {
 
         UsuarioDTO usuarioActualizado = usuarioService.actualizar(id, dto);
         return ResponseEntity.ok(usuarioActualizado);
-    }
-
-    // Eliminar usuario
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarUsuario(@PathVariable Long id) {
-        // Debug: verificar autenticación
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("DEBUG ELIMINAR USUARIO:");
-        System.out.println("- Usuario autenticado: " + (auth != null ? auth.getName() : "null"));
-        System.out.println("- Authorities: " + (auth != null ? auth.getAuthorities() : "null"));
-        System.out.println("- Intentando eliminar usuario ID: " + id);
-
-        usuarioService.eliminar(id);
-        return ResponseEntity.noContent().build();
     }
 }

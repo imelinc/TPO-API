@@ -100,13 +100,6 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public void eliminar(Long id) {
-        if (!usuarioRepository.existsById(id))
-            throw new RecursoNoEncontrado("Usuario no encontrado");
-        usuarioRepository.deleteById(id);
-    }
-
-    @Override
     public boolean existePorUsername(String username) {
         return usuarioRepository.existsByUsername(username);
     }

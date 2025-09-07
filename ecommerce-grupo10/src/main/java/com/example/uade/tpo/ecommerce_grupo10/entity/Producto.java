@@ -48,6 +48,7 @@ public class Producto {
     private int stock;
 
     @ManyToOne
+    @JoinColumn(name = "vendedor_id", nullable = true) // Permitir null cuando se elimina el vendedor
     private Usuario vendedor; // Relacion muchos a uno con la entidad Usuario, cada producto tiene un vendedor
                               // asociado
 
