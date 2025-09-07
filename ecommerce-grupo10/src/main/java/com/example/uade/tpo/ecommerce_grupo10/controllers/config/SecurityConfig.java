@@ -38,34 +38,31 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/productos-publicos/**").permitAll()
 
-                        // Endpoints específicos para COMPRADORES
-                        .requestMatchers("/usuarios/*/wishlist/**").hasRole("COMPRADOR")
-                        .requestMatchers("/usuarios/*/carrito/**").hasRole("COMPRADOR")
+                        // 🌟 ADMIN PUEDE HACER TODO - está incluido en TODAS las reglas 🌟
+                        
+                        // Endpoints para COMPRADORES (+ ADMIN que puede hacer todo)
+                        .requestMatchers("/usuarios/*/wishlist/**").hasAnyRole("COMPRADOR", "ADMIN")
+                        .requestMatchers("/usuarios/*/carrito/**").hasAnyRole("COMPRADOR", "ADMIN")
+                        .requestMatchers("/carritos/**").hasAnyRole("COMPRADOR", "ADMIN")
+                        .requestMatchers("/checkout/**").hasAnyRole("COMPRADOR", "ADMIN")
+                        .requestMatchers("/wishlists/**").hasAnyRole("COMPRADOR", "ADMIN")
+                        .requestMatchers("/items-carrito/**").hasAnyRole("COMPRADOR", "ADMIN")
 
-                        // Otros endpoints para COMPRADORES
-                        .requestMatchers("/carritos/**").hasRole("COMPRADOR")
-                        .requestMatchers("/checkout/**").hasRole("COMPRADOR")
-                        .requestMatchers("/wishlists/**").hasRole("COMPRADOR")
-                        .requestMatchers("/items-carrito/**").hasRole("COMPRADOR")
-
-                        // Endpoints solo para VENDEDORES
+                        // Endpoints para VENDEDORES (+ ADMIN que puede hacer todo)
                         .requestMatchers("/productos/**").hasAnyRole("VENDEDOR", "ADMIN")
                         .requestMatchers("/categorias/**").hasAnyRole("VENDEDOR", "ADMIN")
                         .requestMatchers("/descuentos/**").hasAnyRole("VENDEDOR", "ADMIN")
                         .requestMatchers("/imagenes/**").hasAnyRole("VENDEDOR", "ADMIN")
 
-                        // Endpoints de órdenes con reglas específicas
-                        .requestMatchers("/ordenes/usuario/**").hasAnyRole("COMPRADOR", "ADMIN") // COMPRADOR puede ver
-                                                                                                 // sus órdenes,
-                                                                                                 // validación adicional
-                                                                                                 // en el controlador
-                        .requestMatchers("/ordenes/**").hasRole("ADMIN") // Solo ADMIN puede ver todas las órdenes y
-                                                                         // gestionar órdenes
+                        // Endpoints de órdenes (ADMIN puede ver todo, COMPRADOR solo las suyas)
+                        .requestMatchers("/ordenes/usuario/**").hasAnyRole("COMPRADOR", "ADMIN")
+                        .requestMatchers("/ordenes/**").hasRole("ADMIN") // Solo ADMIN puede gestionar todas las órdenes
 
-                        // Endpoints solo para ADMIN (debe ir DESPUÉS de los específicos)
+                        // Endpoints específicos de administración (solo ADMIN)
                         .requestMatchers("/usuarios/**").hasRole("ADMIN")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
 
+                        // Cualquier otro endpoint requiere autenticación
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider)
