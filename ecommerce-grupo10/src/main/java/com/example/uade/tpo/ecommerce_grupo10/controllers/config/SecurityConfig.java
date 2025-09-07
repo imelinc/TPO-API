@@ -34,11 +34,11 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(req -> req
-                        // Endpoints públicos
+                        // Endpoints publicos
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/productos-publicos/**").permitAll()
 
-                        // Endpoints específicos para COMPRADORES (deben ir ANTES que /usuarios/**)
+                        // Endpoints específicos para COMPRADORES
                         .requestMatchers("/usuarios/*/wishlist/**").hasRole("COMPRADOR")
                         .requestMatchers("/usuarios/*/carrito/**").hasRole("COMPRADOR")
 
@@ -54,8 +54,13 @@ public class SecurityConfig {
                         .requestMatchers("/descuentos/**").hasAnyRole("VENDEDOR", "ADMIN")
                         .requestMatchers("/imagenes/**").hasAnyRole("VENDEDOR", "ADMIN")
 
-                        // Endpoints compartidos (ambos roles pueden ver órdenes)
-                        .requestMatchers("/ordenes/**").authenticated()
+                        // Endpoints de órdenes con reglas específicas
+                        .requestMatchers("/ordenes/usuario/**").hasAnyRole("COMPRADOR", "ADMIN") // COMPRADOR puede ver
+                                                                                                 // sus órdenes,
+                                                                                                 // validación adicional
+                                                                                                 // en el controlador
+                        .requestMatchers("/ordenes/**").hasRole("ADMIN") // Solo ADMIN puede ver todas las órdenes y
+                                                                         // gestionar órdenes
 
                         // Endpoints solo para ADMIN (debe ir DESPUÉS de los específicos)
                         .requestMatchers("/usuarios/**").hasRole("ADMIN")

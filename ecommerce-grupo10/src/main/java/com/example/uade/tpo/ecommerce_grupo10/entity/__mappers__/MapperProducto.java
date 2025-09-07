@@ -1,6 +1,7 @@
 package com.example.uade.tpo.ecommerce_grupo10.entity.__mappers__;
 
 import java.util.Date;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -10,7 +11,6 @@ import com.example.uade.tpo.ecommerce_grupo10.entity.Producto;
 import com.example.uade.tpo.ecommerce_grupo10.entity.Usuario;
 import com.example.uade.tpo.ecommerce_grupo10.entity.__dto__.ProductoDTO;
 import com.example.uade.tpo.ecommerce_grupo10.entity.__dto__.DescuentoProductoDTO;
-import com.example.uade.tpo.ecommerce_grupo10.exceptions.RecursoNoEncontrado;
 import com.example.uade.tpo.ecommerce_grupo10.service.descuentoProducto.DescuentoProductoService;
 
 @Component
@@ -47,26 +47,29 @@ public class MapperProducto {
         ProductoDTO dto = toDTO(p);
 
         try {
-            // Intentar obtener descuento activo
-            DescuentoProductoDTO descuento = descuentoProductoService.obtenerPorProducto(p.getId());
+            // Usar el método Optional para evitar excepción cuando no hay descuento
+            Optional<DescuentoProductoDTO> descuentoOpt = descuentoProductoService
+                    .obtenerPorProductoOptional(p.getId());
 
-            // Verificar si está activo, vigente y tiene porcentaje válido
-            if (Boolean.TRUE.equals(descuento.getActivo()) &&
-                    estaVigente(descuento) &&
-                    descuento.getPorcentajeDescuento() != null &&
-                    descuento.getPorcentajeDescuento() > 0) {
+            if (descuentoOpt.isPresent()) {
+                DescuentoProductoDTO descuento = descuentoOpt.get();
 
-                double porcentaje = descuento.getPorcentajeDescuento();
-                double montoDescuento = p.getPrecio() * (porcentaje / 100.0);
-                double precioConDescuento = p.getPrecio() - montoDescuento;
+                // Verificar si está activo, vigente y tiene porcentaje válido
+                if (Boolean.TRUE.equals(descuento.getActivo()) &&
+                        estaVigente(descuento) &&
+                        descuento.getPorcentajeDescuento() != null &&
+                        descuento.getPorcentajeDescuento() > 0) {
 
-                dto.setTieneDescuento(true);
-                dto.setPorcentajeDescuento(porcentaje);
-                dto.setMontoDescuento(montoDescuento);
-                dto.setPrecioConDescuento(precioConDescuento);
+                    double porcentaje = descuento.getPorcentajeDescuento();
+                    double montoDescuento = p.getPrecio() * (porcentaje / 100.0);
+                    double precioConDescuento = p.getPrecio() - montoDescuento;
+
+                    dto.setTieneDescuento(true);
+                    dto.setPorcentajeDescuento(porcentaje);
+                    dto.setMontoDescuento(montoDescuento);
+                    dto.setPrecioConDescuento(precioConDescuento);
+                }
             }
-        } catch (RecursoNoEncontrado e) {
-            // No hay descuento, ya está configurado como false
         } catch (Exception e) {
             // Cualquier otro error, no mostrar descuento
         }

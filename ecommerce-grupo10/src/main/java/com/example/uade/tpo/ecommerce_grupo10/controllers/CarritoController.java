@@ -1,6 +1,8 @@
 package com.example.uade.tpo.ecommerce_grupo10.controllers;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.uade.tpo.ecommerce_grupo10.controllers.requests.AddItemRequest;
@@ -18,6 +20,15 @@ import lombok.RequiredArgsConstructor;
 public class CarritoController {
 
     private final CarritoService carritoService;
+
+    @GetMapping("/debug-auth") // endpoint para debug de autenticación del carrito
+    public ResponseEntity<String> debugAuth() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String debugInfo = "Usuario: " + (auth != null ? auth.getName() : "null") +
+                ", Authorities: " + (auth != null ? auth.getAuthorities() : "null");
+        System.out.println("DEBUG CARRITO: " + debugInfo);
+        return ResponseEntity.ok(debugInfo);
+    }
 
     // crear carrito si no existe y devolverlo
     @PostMapping("/usuario/{usuarioId}") // asociado a un usuario obviamente
@@ -55,6 +66,10 @@ public class CarritoController {
     public ResponseEntity<CarritoDTO> eliminarItem(
             @PathVariable Long usuarioId,
             @PathVariable Long productoId) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("DEBUG DELETE CARRITO: Usuario: " + usuarioId + ", Producto: " + productoId +
+                ", Auth: " + (auth != null ? auth.getName() : "null") +
+                ", Authorities: " + (auth != null ? auth.getAuthorities() : "null"));
         return ResponseEntity.ok(
                 carritoService.eliminarItem(usuarioId, productoId));
     }

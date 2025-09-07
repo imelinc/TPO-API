@@ -91,4 +91,33 @@ public class ProductoServiceImpl implements ProductoService {
                 .map(mapperProducto::toDTO);
     }
 
+    // MÉTODOS PARA VENDEDORES
+
+    @Override
+    public Page<Producto> listarPorVendedor(Long vendedorId, Pageable pageable) {
+        return productoRepository.findByVendedorId(vendedorId, pageable);
+    }
+
+    @Override
+    public Page<Producto> listarDisponiblesPorVendedor(Long vendedorId, Pageable pageable) {
+        return productoRepository.findByVendedorIdAndStockGreaterThan(vendedorId, 0, pageable);
+    }
+
+    @Override
+    public Page<Producto> buscarPorTituloPorVendedor(Long vendedorId, String titulo, Pageable pageable) {
+        return productoRepository.findByVendedorIdAndTituloContainingIgnoreCase(vendedorId, titulo, pageable);
+    }
+
+    @Override
+    public Page<Producto> buscarPorCategoriaPorVendedor(Long vendedorId, Long categoriaId, Pageable pageable) {
+        return productoRepository.findByVendedorIdAndCategoriaId(vendedorId, categoriaId, pageable);
+    }
+
+    @Override
+    public Page<ProductoDTO> buscarPorPrecioPorVendedor(Long vendedorId, Double precioMin, Double precioMax,
+            Pageable pageable) {
+        return productoRepository.findByVendedorIdAndPrecioBetween(vendedorId, precioMin, precioMax, pageable)
+                .map(mapperProducto::toDTO);
+    }
+
 }
