@@ -250,8 +250,8 @@ public class ProductoController {
     // Buscar por precio - ADMIN ve todos, VENDEDOR ve solo los suyos
     @GetMapping("/precio")
     public ResponseEntity<Page<ProductoDTO>> buscarPorPrecio(
-            @RequestParam Double precioMin,
-            @RequestParam Double precioMax,
+            @RequestParam Double min,
+            @RequestParam Double max,
             @PageableDefault(size = 10, sort = "precio") Pageable pageable) {
 
         // Obtener el usuario autenticado
@@ -266,13 +266,13 @@ public class ProductoController {
 
         if (esAdmin) {
             // ADMIN puede buscar todos los productos por precio
-            result = productoService.buscarPorPrecio(precioMin, precioMax, pageable);
+            result = productoService.buscarPorPrecio(min, max, pageable);
         } else {
             // VENDEDOR solo puede buscar sus productos por precio
             Optional<UsuarioDTO> usuarioOpt = usuarioService.buscarPorEmail(emailUsuario);
             if (usuarioOpt.isPresent()) {
                 Long vendedorId = usuarioOpt.get().getId();
-                result = productoService.buscarPorPrecioPorVendedor(vendedorId, precioMin, precioMax, pageable);
+                result = productoService.buscarPorPrecioPorVendedor(vendedorId, min, max, pageable);
             } else {
                 throw new RuntimeException("Usuario no encontrado");
             }

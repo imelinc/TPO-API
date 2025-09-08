@@ -27,4 +27,8 @@ public interface DescuentoProductoService {
     DescuentoProductoDTO desactivar(Long id);
 
     void eliminar(Long id);
+
+    void validarPropietarioProducto(Long productoId, String emailUsuario);
+
+    void validarPropietarioDescuento(Long descuentoId, String emailUsuario);
 }

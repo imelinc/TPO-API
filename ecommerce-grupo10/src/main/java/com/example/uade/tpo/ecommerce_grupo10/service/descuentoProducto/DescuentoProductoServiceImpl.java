@@ -122,6 +122,41 @@ public class DescuentoProductoServiceImpl implements DescuentoProductoService {
         descuentoProductoRepository.deleteById(id);
     }
 
+    // Validar que el usuario sea propietario del producto
+    @Override
+    public void validarPropietarioProducto(Long productoId, String emailUsuario) {
+        Producto producto = productoRepository.findById(productoId)
+                .orElseThrow(() -> new RecursoNoEncontrado("Producto no encontrado id=" + productoId));
+
+        if (producto.getVendedor() == null) {
+            throw new IllegalArgumentException("El producto no tiene un vendedor asignado");
+        }
+
+        if (!producto.getVendedor().getEmail().equals(emailUsuario)) {
+            throw new IllegalArgumentException("No tienes permisos para gestionar descuentos de este producto");
+        }
+    }
+
+    // Validar que el usuario sea propietario del producto asociado al descuento
+    @Override
+    public void validarPropietarioDescuento(Long descuentoId, String emailUsuario) {
+        DescuentoProducto descuento = descuentoProductoRepository.findById(descuentoId)
+                .orElseThrow(() -> new RecursoNoEncontrado("Descuento no encontrado id=" + descuentoId));
+
+        Producto producto = descuento.getProducto();
+        if (producto == null) {
+            throw new IllegalArgumentException("El descuento no tiene un producto asociado");
+        }
+
+        if (producto.getVendedor() == null) {
+            throw new IllegalArgumentException("El producto no tiene un vendedor asignado");
+        }
+
+        if (!producto.getVendedor().getEmail().equals(emailUsuario)) {
+            throw new IllegalArgumentException("No tienes permisos para gestionar este descuento");
+        }
+    }
+
     // metodo para validar si el descuento es valido en terminos de valores y fechas
     private void validarDTO(DescuentoProductoDTO dto) {
         if (dto.getPorcentajeDescuento() == null || dto.getPorcentajeDescuento() < 0

@@ -38,29 +38,32 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/productos-publicos/**").permitAll()
 
-                        // Endpoints para COMPRADORES (+ ADMIN que puede hacer todo)
+                        // � ADMIN ES REY - ACCESO TOTAL A TODO �
+                        // REGLAS ESPECÍFICAS PRIMERO (más específico a menos específico)
+
+                        // Endpoints específicos de usuarios para COMPRADORES (MÁS ESPECÍFICOS)
                         .requestMatchers("/usuarios/*/wishlist/**").hasAnyRole("COMPRADOR", "ADMIN")
                         .requestMatchers("/usuarios/*/carrito/**").hasAnyRole("COMPRADOR", "ADMIN")
+
+                        // Otros endpoints para COMPRADORES Y ADMIN
                         .requestMatchers("/carritos/**").hasAnyRole("COMPRADOR", "ADMIN")
                         .requestMatchers("/checkout/**").hasAnyRole("COMPRADOR", "ADMIN")
                         .requestMatchers("/wishlists/**").hasAnyRole("COMPRADOR", "ADMIN")
                         .requestMatchers("/items-carrito/**").hasAnyRole("COMPRADOR", "ADMIN")
+                        .requestMatchers("/ordenes/usuario/**").hasAnyRole("COMPRADOR", "ADMIN")
 
-                        // Endpoints para VENDEDORES (+ ADMIN que puede hacer todo)
+                        // Endpoints para VENDEDORES Y ADMIN
                         .requestMatchers("/productos/**").hasAnyRole("VENDEDOR", "ADMIN")
                         .requestMatchers("/categorias/**").hasAnyRole("VENDEDOR", "ADMIN")
                         .requestMatchers("/descuentos/**").hasAnyRole("VENDEDOR", "ADMIN")
                         .requestMatchers("/imagenes/**").hasAnyRole("VENDEDOR", "ADMIN")
 
-                        // Endpoints de órdenes (ADMIN puede ver todo, COMPRADOR solo las suyas)
-                        .requestMatchers("/ordenes/usuario/**").hasAnyRole("COMPRADOR", "ADMIN")
-                        .requestMatchers("/ordenes/**").hasRole("ADMIN") // Solo ADMIN puede gestionar todas las órdenes
-
-                        // Endpoints específicos de administración (solo ADMIN)
-                        .requestMatchers("/usuarios/**").hasRole("ADMIN")
+                        // ADMIN - Reglas generales (MENOS ESPECÍFICAS, van al final)
+                        .requestMatchers("/usuarios/**").hasRole("ADMIN") // Solo ADMIN para gestión general de usuarios
                         .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/ordenes/**").hasRole("ADMIN") // Solo ADMIN para gestión general de órdenes
 
-                        // Cualquier otro endpoint requiere autenticación
+                        // Cualquier otro endpoint - requiere autenticación
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider)
