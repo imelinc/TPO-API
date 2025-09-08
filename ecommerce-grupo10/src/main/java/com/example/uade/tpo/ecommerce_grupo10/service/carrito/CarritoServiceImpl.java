@@ -34,34 +34,56 @@ public class CarritoServiceImpl implements CarritoService {
     @Transactional(readOnly = true)
     public CarritoDTO obtenerPorUsuario(Long usuarioId) {
         Carrito c = carritoRepository.findByUsuarioId(usuarioId)
-            .orElseGet(() -> crearYGuardarCarrito(usuarioId));
+                .orElseGet(() -> crearYGuardarCarrito(usuarioId));
         return mapperCarrito.toDTO(c);
     }
 
     @Override
     public CarritoDTO crearSiNoExiste(Long usuarioId) {
         Carrito c = carritoRepository.findByUsuarioId(usuarioId)
-            .orElseGet(() -> crearYGuardarCarrito(usuarioId));
+                .orElseGet(() -> crearYGuardarCarrito(usuarioId));
         return mapperCarrito.toDTO(c);
     }
 
     @Override
     public CarritoDTO agregarItem(Long usuarioId, Long productoId, int cantidad) {
-        if (cantidad <= 0) throw new IllegalArgumentException("La cantidad debe ser > 0");
+        if (cantidad <= 0)
+            throw new IllegalArgumentException("La cantidad debe ser > 0");
+
         Carrito carrito = carritoRepository.findByUsuarioId(usuarioId)
                 .orElseGet(() -> crearYGuardarCarrito(usuarioId));
 
         Producto producto = productoRepository.findById(productoId)
                 .orElseThrow(() -> new RecursoNoEncontrado("Producto no encontrado"));
 
-        // Si ya existe el item, acumulo cantidad
+        // 🛡️ VALIDACIÓN DE STOCK
+        if (producto.getStock() <= 0) {
+            throw new IllegalArgumentException("El producto no tiene stock disponible");
+        }
+
+        // Si ya existe el item, verificar que no exceda el stock
         var itemExistente = itemCarritoRepository.findByCarritoIdAndProductoId(carrito.getId(), productoId);
         if (itemExistente.isPresent()) {
             ItemCarrito it = itemExistente.get();
-            it.setCantidad(it.getCantidad() + cantidad);
-            // precioUnitario queda como estaba
+            int cantidadTotal = it.getCantidad() + cantidad;
+
+            // Verificar que la cantidad total no exceda el stock
+            if (cantidadTotal > producto.getStock()) {
+                throw new IllegalArgumentException(
+                        String.format("Stock insuficiente. Disponible: %d, Solicitado: %d (ya tienes %d en el carrito)",
+                                producto.getStock(), cantidadTotal, it.getCantidad()));
+            }
+
+            it.setCantidad(cantidadTotal);
             itemCarritoRepository.save(it);
         } else {
+            // Verificar stock para nuevo item
+            if (cantidad > producto.getStock()) {
+                throw new IllegalArgumentException(
+                        String.format("Stock insuficiente. Disponible: %d, Solicitado: %d",
+                                producto.getStock(), cantidad));
+            }
+
             ItemCarrito it = new ItemCarrito();
             it.setCarrito(carrito);
             it.setProducto(producto);
@@ -87,6 +109,17 @@ public class CarritoServiceImpl implements CarritoService {
             carrito.getItems().remove(it);
             itemCarritoRepository.delete(it);
         } else { // y si no, actualizamos la cantidad
+            // Validar stock antes de actualizar
+            Producto producto = productoRepository.findById(productoId)
+                    .orElseThrow(() -> new RecursoNoEncontrado("Producto no encontrado"));
+
+            // Verificar si el producto tiene stock suficiente
+            if (producto.getStock() < cantidad) {
+                throw new IllegalArgumentException(
+                        String.format("Stock insuficiente. Stock disponible: %d, cantidad solicitada: %d",
+                                producto.getStock(), cantidad));
+            }
+
             it.setCantidad(cantidad);
             itemCarritoRepository.save(it);
         }
@@ -113,7 +146,7 @@ public class CarritoServiceImpl implements CarritoService {
                 .orElseThrow(() -> new RecursoNoEncontrado("Carrito inexistente para el usuario"));
 
         itemCarritoRepository.deleteByCarritoId(carrito.getId());
-        carrito.setItems(new ArrayList<>()); // vacio 
+        carrito.setItems(new ArrayList<>()); // vacio
         return mapperCarrito.toDTO(carrito);
     }
 

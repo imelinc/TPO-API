@@ -55,6 +55,12 @@ public class WishlistItemServiceImpl implements WishlistItemService {
         Producto producto = productoRepository.findById(productoId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Producto no encontrado"));
 
+        // Validar stock antes de agregar a la wishlist
+        if (producto.getStock() <= 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "No se puede agregar un producto sin stock a la wishlist");
+        }
+
         boolean exists = itemRepository.existsByWishlistIdAndProductoId(wishlist.getId(), productoId);
         if (exists) { // hago la verificacion para ver si el producto ya existe en la wishlist
             throw new ResponseStatusException(HttpStatus.CONFLICT, "El producto ya está en la wishlist");
